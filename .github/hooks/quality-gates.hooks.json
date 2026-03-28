@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/lint-gate.sh",
+        "comment": "Blocks file edits when lint errors exist (allows editing files WITH errors so the model can fix them)",
+        "timeoutSec": 30
+      },
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/commit-gate.sh",
+        "comment": "Blocks git commits unless lint, type check, and tests all pass",
+        "timeoutSec": 120
+      }
+    ]
+  }
+}

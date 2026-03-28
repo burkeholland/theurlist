@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>urlist — shareable link collections</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f8fafb;
+    --accent: #ff7f50;
+    --accent-hover: #e86f43;
+    --link: #0ea5e9;
+    --link-hover: #0284c7;
+    --border: #e0e4e8;
+    --text: #111827;
+    --text-muted: #6b7280;
+    --mono-bg: #f8fafb;
+    --blue-bg: #fff0eb;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --success: #16a34a;
+    --radius: 6px;
+    --radius-sm: 4px;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- NAV ---- */
+  .nav {
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 14px;
+  }
+  .nav-links a, .nav-right a {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover, .nav-right a:hover {
+    color: var(--text);
+  }
+  .nav-links a.active {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ---- LAYOUT ---- */
+  .page {
+    display: none;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 16px 48px;
+  }
+  .page.visible { display: block; }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    height: 38px;
+    padding: 0 14px;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-sm {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+  .btn-outline {
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--border);
+    height: 30px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+  .btn-outline:hover { background: var(--bg-secondary); }
+  .btn-ghost {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+  .btn-ghost:hover { color: var(--text); }
+  .btn-danger-ghost {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 0;
+    cursor: pointer;
+    font-size: 12px;
+    transition: color 0.15s;
+  }
+  .btn-danger-ghost:hover { color: var(--danger); }
+
+  /* ---- INPUTS ---- */
+  .input {
+    font-family: var(--font-body);
+    font-size: 14px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+  }
+  .input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,127,80,0.12);
+  }
+  .input-sm {
+    height: 36px;
+    font-size: 13px;
+  }
+  .input-mono {
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  textarea.input {
+    height: auto;
+    padding: 8px 10px;
+    resize: vertical;
+    line-height: 1.45;
+  }
+
+  /* ---- LABEL ---- */
+  .label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+
+  /* ---- UTILITIES ---- */
+  .mono { font-family: var(--font-mono); }
+  .muted { color: var(--text-muted); }
+  .small { font-size: 13px; }
+  .xsmall { font-size: 12px; }
+  .link { color: var(--link); text-decoration: none; }
+  .link:hover { text-decoration: underline; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+  /* ---- HOME ---- */
+  .home-hero {
+    padding: 80px 16px 120px;
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+  }
+  .home-hero-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .home-hero h1 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .home-hero h1 .w-coral { color: #ff7f50; }
+  .home-hero h1 .w-azure { color: #0ea5e9; }
+  .home-hero h1 .w-sage { color: #84cc16; }
+  .home-hero p {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 360px;
+  }
+  @media (max-width: 680px) {
+    .home-hero {
+      flex-direction: column;
+      text-align: center;
+      gap: 32px;
+      padding: 56px 16px 56px;
+    }
+    .home-hero p { margin: 0 auto; }
+    .home-preview { max-width: 100%; }
+  }
+  /* List preview mockup */
+  .home-preview {
+    width: 340px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+    text-align: left;
+  }
+  .home-preview-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .home-preview-slug {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .home-preview-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .home-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .home-preview-item:last-child {
+    border-bottom: none;
+  }
+  .home-preview-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .home-preview-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .home-preview-url {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .home-cta-section {
+    position: relative;
+    padding: 48px 16px 0;
+    text-align: center;
+    background: var(--bg-secondary);
+    min-height: calc(100vh - 520px);
+  }
+  .home-cta-section::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: var(--bg-secondary);
+    border-radius: 50% 50% 0 0;
+  }
+  .home-cta-content {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  .home-cta-content .label {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .home-cta-input-row {
+    display: flex;
+    gap: 10px;
+  }
+  .home-cta-input-row .input {
+    flex: 1;
+    height: 56px;
+    font-size: 17px;
+    padding: 0 18px;
+    border-radius: 8px;
+  }
+  .home-cta-input-row .btn {
+    height: 56px;
+    padding: 0 28px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  /* ---- COMPOSE ---- */
+  .compose-header {
+    margin-bottom: 20px;
+  }
+  .compose-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .field-group {
+    margin-bottom: 14px;
+  }
+  .url-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .url-input-wrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,127,80,0.12);
+  }
+  .url-prefix {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 0 0 0 10px;
+    white-space: nowrap;
+    user-select: none;
+    line-height: 36px;
+  }
+  .url-input-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    height: 36px;
+    padding: 0 10px 0 2px;
+    background: transparent;
+    color: var(--text);
+  }
+  .url-status {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    margin-top: 4px;
+  }
+  .url-status.available { color: var(--success); }
+  .url-status.taken { color: var(--danger); }
+  .char-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 3px;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 0;
+  }
+  .section-head h2 {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 6px;
+    height: 18px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .add-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 24px 0;
+  }
+  .add-row .input {
+    flex: 1;
+    height: 56px;
+    font-size: 17px;
+    padding: 0 18px;
+    border-radius: 8px;
+  }
+  .add-row .btn {
+    height: 56px;
+    padding: 0 28px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+
+  /* Link table */
+  .link-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .link-table thead th {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 6px 8px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+  }
+  .link-table thead th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+  .link-table thead th:last-child {
+    border-radius: 0 var(--radius-sm) 0 0;
+    text-align: right;
+    width: 28px;
+  }
+  .link-table tbody td {
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .link-table .link-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .link-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .link-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .link-table .link-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .link-table .link-url {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+  }
+  .link-table td:last-child { text-align: right; }
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .remove-btn:hover {
+    color: var(--danger);
+    background: #fff1f0;
+  }
+  .compose-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* ---- PUBLIC ---- */
+  .pub-banner {
+    background: var(--blue-bg);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .pub-banner-label {
+    color: var(--accent);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .pub-banner-url {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .pub-banner .btn { flex-shrink: 0; }
+  .pub-title {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .pub-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    line-height: 1.45;
+  }
+  .pub-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .pub-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .pub-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    gap: 0;
+  }
+  .pub-card-img {
+    width: 120px;
+    min-height: 80px;
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .pub-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pub-card-body {
+    padding: 10px 12px;
+    min-width: 0;
+  }
+  .pub-card-title {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .pub-card-title a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  .pub-card-title a:hover { text-decoration: underline; }
+  .pub-card-domain {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .pub-card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ---- MY LINKS ---- */
+  .my-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .my-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .my-row {
+    display: flex;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .my-row:first-child {
+    border-top: 1px solid var(--border);
+  }
+  .my-slug {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .my-slug a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  .my-slug a:hover { text-decoration: underline; }
+  .my-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .my-actions a {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .my-actions a:hover { color: var(--text); }
+  .my-actions a.delete:hover { color: var(--danger); }
+  .empty-state {
+    padding: 32px 0;
+    text-align: center;
+  }
+  .empty-state p {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .compose-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .compose-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .compose-card-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .compose-meta-row {
+    display: flex;
+    gap: 16px;
+  }
+  .compose-meta-row .field-group {
+    flex: 1;
+    min-width: 0;
+  }
+  @media (max-width: 580px) {
+    .compose-meta-row { flex-direction: column; gap: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="#" class="nav-logo" onclick="showTab('home')">urlist<span style="color:#ff7f50">.</span></a>
+    <div class="nav-links">
+      <a href="#" data-tab="home" class="active" onclick="showTab('home')">Home</a>
+      <a href="#" data-tab="compose" onclick="showTab('compose')">Compose</a>
+      <a href="#" data-tab="public" onclick="showTab('public')">Public</a>
+      <a href="#" data-tab="mylinks" onclick="showTab('mylinks')">My lists</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="#">Sign in</a>
+  </div>
+</nav>
+
+<!-- ═══════════ HOME ═══════════ -->
+<div id="page-home" class="page visible" style="max-width:none; padding:0;">
+  <div class="home-hero">
+    <div class="home-hero-text">
+      <h1><span class="w-coral">Group</span>, <span class="w-sage">save</span> and <span class="w-azure">share</span> links<br>with the world</h1>
+      <p>Create curated link collections with rich previews, custom URLs, and drag-to-reorder. No sign-up needed.</p>
+    </div>
+    <div class="home-preview">
+      <div class="home-preview-header">
+        <div class="home-preview-slug">/awesome-frontend-tools</div>
+        <div class="home-preview-meta">3 links · published just now</div>
+      </div>
+      <div class="home-preview-item">
+        <div class="home-preview-thumb">V</div>
+        <div>
+          <div class="home-preview-title">Vite — Next Generation Frontend Tooling</div>
+          <div class="home-preview-url">vitejs.dev</div>
+        </div>
+      </div>
+      <div class="home-preview-item">
+        <div class="home-preview-thumb">T</div>
+        <div>
+          <div class="home-preview-title">Tailwind CSS — Rapidly build modern websites</div>
+          <div class="home-preview-url">tailwindcss.com</div>
+        </div>
+      </div>
+      <div class="home-preview-item">
+        <div class="home-preview-thumb">TS</div>
+        <div>
+          <div class="home-preview-title">TypeScript Playground</div>
+          <div class="home-preview-url">typescriptlang.org/play</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="home-cta-section">
+    <div class="home-cta-content">
+      <div class="label" style="text-align:left">Add your first link</div>
+      <div class="home-cta-input-row">
+        <input type="text" class="input input-mono" placeholder="https://example.com">
+        <button class="btn btn-primary" onclick="showTab('compose')">Go</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ COMPOSE ═══════════ -->
+<div id="page-compose" class="page">
+  <div class="compose-header">
+    <h1>New list</h1>
+  </div>
+
+  <div class="compose-meta-row">
+  <div class="field-group">
+    <label class="label">URL</label>
+    <div class="url-input-wrap">
+      <span class="url-prefix">urlist.app/</span>
+      <input type="text" value="awesome-frontend-tools" id="slug-input" oninput="checkSlug()">
+    </div>
+    <div class="url-status available" id="slug-status">✓ available</div>
+  </div>
+
+  <div class="field-group">
+    <label class="label">Description</label>
+    <textarea class="input" rows="2" id="desc-input" placeholder="What's this list about?" oninput="updateCharCount()">A curated set of frontend tools for modern web development.</textarea>
+    <div class="char-count"><span id="char-count">58</span>/280</div>
+  </div>
+  </div>
+
+  <div class="add-row">
+    <input type="text" class="input input-mono" placeholder="https://example.com">
+    <button class="btn btn-primary">Add</button>
+  </div>
+
+  <div class="pub-links">
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://vitejs.dev/og-image-v4.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title">Vite — Next Generation Frontend Tooling</div>
+        <div class="pub-card-domain">vitejs.dev</div>
+        <div class="pub-card-desc">Vite is a build tool that aims to provide a faster and leaner development experience for modern web projects.</div>
+      </div>
+      <button class="remove-btn" title="Remove" style="align-self:start; margin:10px 8px 0 0;">×</button>
+    </div>
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://tailwindcss.com/_next/static/media/social-card-large.a6e71726.jpg" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title">Tailwind CSS — Rapidly build modern websites</div>
+        <div class="pub-card-domain">tailwindcss.com</div>
+        <div class="pub-card-desc">A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.</div>
+      </div>
+      <button class="remove-btn" title="Remove" style="align-self:start; margin:10px 8px 0 0;">×</button>
+    </div>
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://www.typescriptlang.org/images/branding/og-image.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title">TypeScript Playground</div>
+        <div class="pub-card-domain">typescriptlang.org/play</div>
+        <div class="pub-card-desc">An online editor for exploring TypeScript and JavaScript with full type-checking and auto-complete.</div>
+      </div>
+      <button class="remove-btn" title="Remove" style="align-self:start; margin:10px 8px 0 0;">×</button>
+    </div>
+  </div>
+
+  <div class="compose-actions">
+    <button class="btn btn-primary" onclick="showTab('public')">Publish</button>
+    <span class="small muted">3 links</span>
+  </div>
+</div>
+
+<!-- ═══════════ PUBLIC ═══════════ -->
+<div id="page-public" class="page">
+  <div class="pub-banner">
+    <span class="pub-banner-label">Published —</span>
+    <span class="pub-banner-url">urlist.app/awesome-frontend-tools</span>
+    <button class="btn btn-outline" onclick="copyUrl(this)">Copy</button>
+  </div>
+
+  <div class="pub-title">/awesome-frontend-tools</div>
+  <div class="pub-desc">A curated set of frontend tools for modern web development.</div>
+  <div class="pub-meta">5 links</div>
+  <hr class="divider">
+
+  <div class="pub-links">
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://vitejs.dev/og-image-v4.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title"><a href="#">Vite — Next Generation Frontend Tooling</a></div>
+        <div class="pub-card-domain">vitejs.dev</div>
+        <div class="pub-card-desc">Vite is a build tool that aims to provide a faster and leaner development experience for modern web projects with instant server start and lightning fast HMR.</div>
+      </div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://tailwindcss.com/_next/static/media/social-card-large.a6e71726.jpg" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title"><a href="#">Tailwind CSS — Rapidly build modern websites</a></div>
+        <div class="pub-card-domain">tailwindcss.com</div>
+        <div class="pub-card-desc">A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.</div>
+      </div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://www.typescriptlang.org/images/branding/og-image.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title"><a href="#">TypeScript Playground</a></div>
+        <div class="pub-card-domain">typescriptlang.org/play</div>
+        <div class="pub-card-desc">An online editor for exploring TypeScript and JavaScript with full type-checking and auto-complete.</div>
+      </div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://biomejs.dev/img/og.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title"><a href="#">Biome — Toolchain of the web</a></div>
+        <div class="pub-card-domain">biomejs.dev</div>
+        <div class="pub-card-desc">Format, lint, and more in a fraction of a second. One toolchain for your web project.</div>
+      </div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-card-img"><img src="https://caniuse.com/img/favicon-128.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="pub-card-body">
+        <div class="pub-card-title"><a href="#">Can I Use — Browser support tables</a></div>
+        <div class="pub-card-domain">caniuse.com</div>
+        <div class="pub-card-desc">Up-to-date browser support tables for front-end web technologies on desktop and mobile browsers.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MY LINKS ═══════════ -->
+<div id="page-mylinks" class="page">
+  <div class="my-header">
+    <h1>My lists</h1>
+    <button class="btn btn-primary btn-sm" onclick="showTab('compose')">New list</button>
+  </div>
+
+  <div id="my-lists">
+    <div class="my-row">
+      <div class="my-slug"><a href="#" onclick="showTab('public')">/awesome-frontend-tools</a></div>
+      <span class="count-badge">5</span>
+      <div class="my-actions">
+        <a href="#" onclick="showTab('compose')">Edit</a>
+        <a href="#" class="delete">Delete</a>
+      </div>
+    </div>
+    <div class="my-row">
+      <div class="my-slug"><a href="#">/design-systems</a></div>
+      <span class="count-badge">12</span>
+      <div class="my-actions">
+        <a href="#" onclick="showTab('compose')">Edit</a>
+        <a href="#" class="delete">Delete</a>
+      </div>
+    </div>
+    <div class="my-row">
+      <div class="my-slug"><a href="#">/rust-learning</a></div>
+      <span class="count-badge">8</span>
+      <div class="my-actions">
+        <a href="#" onclick="showTab('compose')">Edit</a>
+        <a href="#" class="delete">Delete</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" style="display:none;" id="empty-state">
+    <p>No lists. <a href="#" class="link" onclick="showTab('compose')">Create one</a></p>
+  </div>
+</div>
+
+<script>
+  function showTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
+    document.getElementById('page-' + tab).classList.add('visible');
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.toggle('active', a.dataset.tab === tab);
+    });
+  }
+
+  function checkSlug() {
+    const val = document.getElementById('slug-input').value.trim();
+    const el = document.getElementById('slug-status');
+    if (!val) {
+      el.textContent = '';
+      el.className = 'url-status';
+    } else if (val === 'taken-slug') {
+      el.textContent = '✗ taken';
+      el.className = 'url-status taken';
+    } else {
+      el.textContent = '✓ available';
+      el.className = 'url-status available';
+    }
+  }
+
+  function updateCharCount() {
+    const len = document.getElementById('desc-input').value.length;
+    document.getElementById('char-count').textContent = len;
+  }
+
+  function copyUrl(btn) {
+    const text = 'urlist.app/awesome-frontend-tools';
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied';
+      setTimeout(() => btn.textContent = orig, 1500);
+    }).catch(() => {});
+  }
+
+  // init char count
+  updateCharCount();
+</script>
+</body>
+</html>

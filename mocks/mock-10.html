@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Urlist — Curate and share link collections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #111827;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 60px;
+  }
+  .nav-wrap {
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .logo {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    user-select: none;
+  }
+  .logo span { color: #ff7f50; }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+  .nav-links li {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .nav-links li:hover { color: #111827; }
+  .nav-links li.active { color: #111827; }
+  .nav-sign-in {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  .nav-sign-in:hover { color: #111827; }
+
+  /* ── BUTTONS ── */
+  .btn-coral {
+    background: #ff7f50;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    line-height: 1;
+  }
+  .btn-coral:hover { background: #e86f43; }
+  .btn-coral-sm {
+    background: #ff7f50;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: background 0.15s ease;
+    line-height: 1;
+  }
+  .btn-coral-sm:hover { background: #e86f43; }
+
+  /* ── TAB CONTENT ── */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── HOME ── */
+  .hero {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 72px 24px 64px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 1.05rem;
+    color: #6b7280;
+    line-height: 1.65;
+    margin-bottom: 36px;
+  }
+  .hero-input-row {
+    display: flex;
+    gap: 8px;
+    max-width: 440px;
+    margin: 0 auto 14px;
+  }
+  .hero-input-row input {
+    flex: 1;
+    padding: 13px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .hero-input-row input::placeholder { color: #9ca3af; }
+  .hero-input-row input:focus { border-color: #d1d5db; }
+  .hero-input-row .btn-coral { padding: 13px 28px; white-space: nowrap; }
+  .hero-muted {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  .features-section {
+    background: #fafafa;
+    border-top: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .features {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 64px 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  .feature-item {}
+  .feature-bar {
+    width: 24px;
+    height: 2px;
+    background: #ff7f50;
+    margin-bottom: 14px;
+    border-radius: 1px;
+  }
+  .feature-item h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 8px;
+  }
+  .feature-item p {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+
+  .home-footer {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .home-footer p {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  /* ── COMPOSE ── */
+  .compose-wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .compose-wrap h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s ease;
+    background: #ffffff;
+  }
+  .form-input::placeholder { color: #9ca3af; }
+  .form-input:focus { border-color: #d1d5db; }
+  .slug-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+  }
+  .slug-input-wrap:focus-within { border-color: #d1d5db; }
+  .slug-prefix {
+    padding: 11px 0 11px 14px;
+    font-size: 15px;
+    color: #9ca3af;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .slug-input {
+    flex: 1;
+    padding: 11px 14px 11px 0;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    color: #111827;
+    outline: none;
+    background: transparent;
+  }
+  .slug-input::placeholder { color: #9ca3af; }
+  .textarea-wrap { position: relative; }
+  .form-textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #111827;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+    transition: border-color 0.15s ease;
+  }
+  .form-textarea::placeholder { color: #9ca3af; }
+  .form-textarea:focus { border-color: #d1d5db; }
+  .char-count {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    font-size: 12px;
+    color: #9ca3af;
+  }
+  .divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 28px 0;
+  }
+  .links-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .links-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+  }
+  .links-header .count {
+    font-size: 13px;
+    color: #9ca3af;
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  .add-link-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .add-link-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .add-link-row input::placeholder { color: #9ca3af; }
+  .add-link-row input:focus { border-color: #d1d5db; }
+
+  .link-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .link-row:last-child { border-bottom: 1px solid #e5e7eb; }
+  .drag-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: grab;
+    padding: 4px 2px;
+    flex-shrink: 0;
+  }
+  .drag-dots span {
+    display: flex;
+    gap: 2px;
+  }
+  .drag-dots span i {
+    width: 3px;
+    height: 3px;
+    background: #c6cbd2;
+    border-radius: 50%;
+    display: block;
+  }
+  .link-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .link-thumb svg { color: #9ca3af; }
+  .link-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .link-info-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .link-info-url {
+    font-size: 12px;
+    font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+    color: #9ca3af;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .link-delete {
+    font-size: 18px;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+    font-family: inherit;
+    line-height: 1;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .link-delete:hover { color: #ef4444; }
+  .btn-publish {
+    width: 100%;
+    padding: 14px;
+    margin-top: 28px;
+  }
+
+  /* ── PUBLIC ── */
+  .public-wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .success-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    margin-bottom: 28px;
+    font-size: 14px;
+    color: #166534;
+    font-weight: 500;
+  }
+  .success-banner svg { flex-shrink: 0; }
+  .public-slug {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .public-desc {
+    font-size: 15px;
+    color: #6b7280;
+    margin-bottom: 6px;
+    line-height: 1.55;
+  }
+  .public-count {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-bottom: 0;
+  }
+
+  .public-links { margin-top: 28px; }
+  .public-link-card {
+    padding: 18px 0 18px 19px;
+    border-bottom: 1px solid #f3f4f6;
+    border-left: 3px solid #ff7f50;
+    position: relative;
+  }
+  .public-link-card:last-child { border-bottom: 1px solid #e5e7eb; }
+  .public-link-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0ea5e9;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    line-height: 1.3;
+  }
+  .public-link-title:hover { color: #0284c7; }
+  .public-link-url {
+    font-size: 12px;
+    font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+    color: #9ca3af;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .public-link-desc {
+    font-size: 13.5px;
+    color: #6b7280;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* ── MY LINKS ── */
+  .mylinks-wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .mylinks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .mylinks-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    letter-spacing: -0.01em;
+  }
+  .list-item {
+    padding: 18px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .list-item:first-child { border-top: 1px solid #f3f4f6; }
+  .list-item-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .list-item-slug {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0ea5e9;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .list-item-slug:hover { color: #0284c7; }
+  .list-item-excerpt {
+    font-size: 14px;
+    color: #6b7280;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .list-item-bottom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  .list-item-count {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+  .list-item-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .list-item-actions button {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .btn-edit {
+    color: #6b7280;
+  }
+  .btn-edit:hover { color: #374151; background: #f3f4f6; }
+  .action-sep {
+    color: #e5e7eb;
+    font-size: 13px;
+    user-select: none;
+  }
+  .btn-delete-text {
+    color: #ef4444;
+  }
+  .btn-delete-text:hover { color: #dc2626; background: #fef2f2; }
+
+  .empty-state {
+    text-align: center;
+    padding: 56px 24px;
+    border: 1px dashed #e5e7eb;
+    border-radius: 10px;
+    margin-top: 28px;
+  }
+  .empty-state p {
+    font-size: 14px;
+    color: #9ca3af;
+    margin-bottom: 4px;
+  }
+  .empty-state p:last-child {
+    font-size: 13px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .features { grid-template-columns: 1fr; gap: 28px; }
+    .hero h1 { font-size: 1.75rem; }
+    .hero-input-row { flex-direction: column; }
+    .hero-input-row .btn-coral { padding: 14px; }
+    .nav-links { gap: 16px; }
+    .list-item-top { flex-direction: column; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ NAV ════════════════ -->
+<div class="nav-wrap">
+  <nav class="nav">
+    <div class="nav-left">
+      <div class="logo" onclick="showTab('home')">The Urlist<span>.</span></div>
+      <ul class="nav-links">
+        <li onclick="showTab('home')" id="nav-home" class="active">Home</li>
+        <li onclick="showTab('compose')" id="nav-compose">Compose</li>
+        <li onclick="showTab('public')" id="nav-public">Public</li>
+        <li onclick="showTab('mylinks')" id="nav-mylinks">My Lists</li>
+      </ul>
+    </div>
+    <button class="nav-sign-in">Sign In</button>
+  </nav>
+</div>
+
+<!-- ════════════════ HOME ════════════════ -->
+<div id="tab-home" class="tab-content active">
+  <section class="hero">
+    <h1>Curate and share beautiful link collections</h1>
+    <p>Organize your favorite links into shareable lists with rich previews and custom short URLs.</p>
+    <div class="hero-input-row">
+      <input type="text" placeholder="Name your list, e.g. frontend-tools">
+      <button class="btn-coral" onclick="showTab('compose')">Get Started</button>
+    </div>
+    <span class="hero-muted">Free to use · No account required to start</span>
+  </section>
+
+  <section class="features-section">
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-bar"></div>
+        <h3>Custom Short URLs</h3>
+        <p>Choose a memorable slug for every list. Share a clean link instead of a messy bookmark dump.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-bar"></div>
+        <h3>Rich Link Previews</h3>
+        <p>Every link automatically pulls titles, descriptions, and favicons so your list looks polished.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-bar"></div>
+        <h3>One-Click Sharing</h3>
+        <p>Publish and share your curated list with a single URL. Recipients see a clean, readable page.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="home-footer">
+    <p>The Urlist — a link curation tool for people who care about sharing well.</p>
+  </footer>
+</div>
+
+<!-- ════════════════ COMPOSE ════════════════ -->
+<div id="tab-compose" class="tab-content">
+  <div class="compose-wrap">
+    <h2>Create a list</h2>
+
+    <div class="form-group">
+      <label class="form-label">Slug</label>
+      <div class="slug-input-wrap">
+        <span class="slug-prefix">urlist.app/</span>
+        <input type="text" class="slug-input" value="awesome-frontend-tools" placeholder="my-list-name">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <div class="textarea-wrap">
+        <textarea class="form-textarea" placeholder="What is this list about?" maxlength="280">A curated collection of frontend development tools, libraries, and resources that I use regularly.</textarea>
+        <span class="char-count">89 / 280</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="links-header">
+      <h3>Links <span class="count">3</span></h3>
+    </div>
+
+    <div class="add-link-row">
+      <input type="text" placeholder="Paste a URL to add…">
+      <button class="btn-coral-sm">Add</button>
+    </div>
+
+    <!-- Link 1 -->
+    <div class="link-row">
+      <div class="drag-dots">
+        <span><i></i><i></i></span>
+        <span><i></i><i></i></span>
+        <span><i></i><i></i></span>
+      </div>
+      <div class="link-thumb">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div class="link-info">
+        <div class="link-info-title">Vite — Next Generation Frontend Tooling</div>
+        <div class="link-info-url">vitejs.dev</div>
+      </div>
+      <button class="link-delete">×</button>
+    </div>
+
+    <!-- Link 2 -->
+    <div class="link-row">
+      <div class="drag-dots">
+        <span><i></i><i></i></span>
+        <span><i></i><i></i></span>
+        <span><i></i><i></i></span>
+      </div>
+      <div class="link-thumb">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div class="link-info">
+        <div class="link-info-title">Tailwind CSS — Utility-First CSS Framework</div>
+        <div class="link-info-url">tailwindcss.com</div>
+      </div>
+      <button class="link-delete">×</button>
+    </div>
+
+    <!-- Link 3 -->
+    <div class="link-row">
+      <div class="drag-dots">
+        <span><i></i><i></i></span>
+        <span><i></i><i></i></span>
+        <span><i></i><i></i></span>
+      </div>
+      <div class="link-thumb">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div class="link-info">
+        <div class="link-info-title">TypeScript — Typed JavaScript at Any Scale</div>
+        <div class="link-info-url">typescriptlang.org</div>
+      </div>
+      <button class="link-delete">×</button>
+    </div>
+
+    <button class="btn-coral btn-publish" onclick="showTab('public')">Publish list</button>
+  </div>
+</div>
+
+<!-- ════════════════ PUBLIC ════════════════ -->
+<div id="tab-public" class="tab-content">
+  <div class="public-wrap">
+
+    <div class="success-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      Your list is live and ready to share.
+    </div>
+
+    <div class="public-slug">/awesome-frontend-tools</div>
+    <p class="public-desc">A curated collection of frontend development tools, libraries, and resources that I use regularly.</p>
+    <p class="public-count">5 links</p>
+
+    <div class="divider"></div>
+
+    <div class="public-links">
+
+      <div class="public-link-card">
+        <a class="public-link-title" href="#">Vite — Next Generation Frontend Tooling</a>
+        <div class="public-link-url">vitejs.dev</div>
+        <div class="public-link-desc">A build tool that aims to provide a faster and leaner development experience for modern web projects.</div>
+      </div>
+
+      <div class="public-link-card">
+        <a class="public-link-title" href="#">Tailwind CSS — Utility-First CSS Framework</a>
+        <div class="public-link-url">tailwindcss.com</div>
+        <div class="public-link-desc">A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.</div>
+      </div>
+
+      <div class="public-link-card">
+        <a class="public-link-title" href="#">TypeScript — Typed JavaScript at Any Scale</a>
+        <div class="public-link-url">typescriptlang.org</div>
+        <div class="public-link-desc">A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.</div>
+      </div>
+
+      <div class="public-link-card">
+        <a class="public-link-title" href="#">Playwright — Reliable End-to-End Testing</a>
+        <div class="public-link-url">playwright.dev</div>
+        <div class="public-link-desc">Cross-browser end-to-end testing for modern web apps. Reliable, capable, and fast across Chromium, Firefox, and WebKit.</div>
+      </div>
+
+      <div class="public-link-card">
+        <a class="public-link-title" href="#">MDN Web Docs</a>
+        <div class="public-link-url">developer.mozilla.org</div>
+        <div class="public-link-desc">The essential resource for web standards documentation — HTML, CSS, JavaScript, and Web APIs.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ MY LINKS ════════════════ -->
+<div id="tab-mylinks" class="tab-content">
+  <div class="mylinks-wrap">
+
+    <div class="mylinks-header">
+      <h2>My Lists</h2>
+      <button class="btn-coral-sm" onclick="showTab('compose')">Create New</button>
+    </div>
+
+    <!-- List 1 -->
+    <div class="list-item">
+      <div class="list-item-top">
+        <a class="list-item-slug" onclick="showTab('public')">/awesome-frontend-tools</a>
+        <span class="list-item-excerpt">A curated collection of frontend development tools</span>
+      </div>
+      <div class="list-item-bottom">
+        <span class="list-item-count">5 links</span>
+        <div class="list-item-actions">
+          <button class="btn-edit">Edit</button>
+          <span class="action-sep">·</span>
+          <button class="btn-delete-text">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- List 2 -->
+    <div class="list-item">
+      <div class="list-item-top">
+        <a class="list-item-slug" onclick="showTab('public')">/design-inspiration</a>
+        <span class="list-item-excerpt">Beautiful design resources and gallery sites</span>
+      </div>
+      <div class="list-item-bottom">
+        <span class="list-item-count">4 links</span>
+        <div class="list-item-actions">
+          <button class="btn-edit">Edit</button>
+          <span class="action-sep">·</span>
+          <button class="btn-delete-text">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- List 3 -->
+    <div class="list-item">
+      <div class="list-item-top">
+        <a class="list-item-slug" onclick="showTab('public')">/rust-learning-path</a>
+        <span class="list-item-excerpt">Resources for learning Rust from scratch</span>
+      </div>
+      <div class="list-item-bottom">
+        <span class="list-item-count">7 links</span>
+        <div class="list-item-actions">
+          <button class="btn-edit">Edit</button>
+          <span class="action-sep">·</span>
+          <button class="btn-delete-text">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state (hidden by default) -->
+    <div class="empty-state" style="display: none;">
+      <p>You don't have any lists yet.</p>
+      <p>Create one to get started.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    const navItem = document.getElementById('nav-' + id);
+    if (navItem) navItem.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Urlist</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --elevated: #1c2128;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #7d8590;
+    --accent: #58a6ff;
+    --danger: #f85149;
+    --success: #3fb950;
+    --radius: 6px;
+    --radius-md: 8px;
+  }
+
+  html { background: var(--bg); color: var(--text-primary); }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-left { display: flex; align-items: center; gap: 24px; }
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: var(--radius);
+    transition: color 0.15s ease;
+    cursor: pointer;
+  }
+  .nav-link:hover { color: var(--text-primary); }
+  .nav-link.active { color: var(--text-primary); }
+  .btn-signin {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .btn-signin:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    line-height: 1.5;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary-lg {
+    padding: 8px 20px;
+    font-size: 14px;
+  }
+
+  /* ── INPUTS ── */
+  .input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 14px;
+    padding: 8px 12px;
+    font-family: inherit;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+  .input:focus { border-color: var(--accent); }
+  textarea.input { resize: vertical; min-height: 72px; }
+
+  /* ── TABS (hidden radio) ── */
+  .tab-radio { display: none; }
+  .page { display: none; }
+  #tab-home:checked ~ .pages .page-home,
+  #tab-compose:checked ~ .pages .page-compose,
+  #tab-public:checked ~ .pages .page-public,
+  #tab-mylinks:checked ~ .pages .page-mylinks { display: block; }
+
+  /* active nav style driven by JS */
+
+  /* ── PAGE: HOME ── */
+  .hero {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 80px 24px 64px;
+    text-align: center;
+  }
+  .hero-title {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .hero-subtitle {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-bottom: 28px;
+  }
+  .hero-input-row {
+    display: flex;
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto 10px;
+  }
+  .hero-input-row .input { flex: 1; }
+  .hero-muted {
+    color: var(--text-secondary);
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  .features {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .feature-item { text-align: center; }
+  .feature-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .feature-desc {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  /* ── PAGE: COMPOSE ── */
+  .compose-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .compose-heading {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .form-hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .slug-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .slug-prefix {
+    background: var(--elevated);
+    border: 1px solid var(--border);
+    border-right: none;
+    border-radius: var(--radius) 0 0 var(--radius);
+    padding: 8px 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    line-height: 1.5;
+  }
+  .slug-row .input {
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .add-link-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .add-link-row .input { flex: 1; }
+
+  .link-list-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .link-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+  }
+  .link-row + .link-row { border-top: 1px solid var(--border); }
+  .link-row-info { min-width: 0; flex: 1; }
+  .link-row-title {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .link-row-url {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+  }
+  .link-row-remove {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin-left: 12px;
+    border-radius: 4px;
+    transition: color 0.15s ease;
+    line-height: 1;
+  }
+  .link-row-remove:hover { color: var(--danger); }
+
+  /* ── PAGE: PUBLIC ── */
+  .public-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .success-bar {
+    background: #122117;
+    border-bottom: 1px solid #1a3a25;
+    padding: 10px 24px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--success);
+  }
+  .public-header {
+    padding-top: 32px;
+    margin-bottom: 24px;
+  }
+  .public-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .public-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .public-meta {
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+  .public-links { display: flex; flex-direction: column; gap: 10px; }
+  .public-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    display: flex;
+    gap: 14px;
+    padding: 14px;
+  }
+  .public-card-thumb {
+    width: 72px;
+    height: 72px;
+    background: var(--elevated);
+    border-radius: var(--radius);
+    flex-shrink: 0;
+  }
+  .public-card-body { min-width: 0; flex: 1; }
+  .public-card-title {
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+  .public-card-title a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+  .public-card-title a:hover { text-decoration: underline; }
+  .public-card-domain {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+    margin-bottom: 4px;
+  }
+  .public-card-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ── PAGE: MY LINKS ── */
+  .mylinks-wrap {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  .mylinks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .mylinks-heading {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .mylinks-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .mylinks-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 12px;
+  }
+  .mylinks-row + .mylinks-row { border-top: 1px solid var(--border); }
+  .mylinks-slug {
+    flex: 1;
+    min-width: 0;
+  }
+  .mylinks-slug a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .mylinks-slug a:hover { text-decoration: underline; }
+  .mylinks-count {
+    color: var(--text-secondary);
+    font-size: 13px;
+    flex-shrink: 0;
+    width: 80px;
+    text-align: right;
+  }
+  .mylinks-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+  }
+  .mylinks-actions span {
+    color: var(--border);
+    user-select: none;
+  }
+  .action-edit {
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .action-edit:hover { color: var(--text-primary); }
+  .action-delete {
+    color: var(--danger);
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.15s ease;
+  }
+  .action-delete:hover { opacity: 1; }
+  .empty-state {
+    color: var(--text-secondary);
+    font-size: 14px;
+    text-align: center;
+    padding: 40px 0;
+  }
+</style>
+</head>
+<body>
+
+<input type="radio" name="tab" id="tab-home" class="tab-radio" checked>
+<input type="radio" name="tab" id="tab-compose" class="tab-radio">
+<input type="radio" name="tab" id="tab-public" class="tab-radio">
+<input type="radio" name="tab" id="tab-mylinks" class="tab-radio">
+
+<nav class="nav">
+  <div class="nav-left">
+    <div class="nav-logo">The Urlist</div>
+    <div class="nav-links">
+      <label for="tab-home" class="nav-link active" data-tab="home">Home</label>
+      <label for="tab-compose" class="nav-link" data-tab="compose">Compose</label>
+      <label for="tab-public" class="nav-link" data-tab="public">Public</label>
+      <label for="tab-mylinks" class="nav-link" data-tab="mylinks">My Links</label>
+    </div>
+  </div>
+  <button class="btn-signin">Sign in</button>
+</nav>
+
+<div class="pages">
+
+  <!-- ════ HOME ════ -->
+  <div class="page page-home">
+    <div class="hero">
+      <h1 class="hero-title">Create and share link collections</h1>
+      <p class="hero-subtitle">Organize the best links on any topic into a simple, shareable page.</p>
+      <div class="hero-input-row">
+        <input type="text" class="input" placeholder="Give your list a name">
+        <button class="btn-primary btn-primary-lg">Start</button>
+      </div>
+      <p class="hero-muted">Free, no account required</p>
+    </div>
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-title">Collect</div>
+        <p class="feature-desc">Paste any URL and we'll pull the title and description automatically.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-title">Organize</div>
+        <p class="feature-desc">Reorder, describe, and group links however makes sense to you.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-title">Share</div>
+        <p class="feature-desc">Each list gets a short URL you can send to anyone, anywhere.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ COMPOSE ════ -->
+  <div class="page page-compose">
+    <div class="compose-wrap">
+      <h2 class="compose-heading">New list</h2>
+
+      <div class="form-group">
+        <label class="form-label">Slug</label>
+        <div class="slug-row">
+          <span class="slug-prefix">urlist.app/</span>
+          <input type="text" class="input" placeholder="my-favorite-tools" value="frontend-resources">
+        </div>
+        <p class="form-hint">Letters, numbers, and hyphens only</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="input" placeholder="What's this list about?">A collection of essential tools and references for frontend developers.</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Add links</label>
+        <div class="add-link-row">
+          <input type="text" class="input" placeholder="Paste a URL">
+          <button class="btn-primary">Add</button>
+        </div>
+      </div>
+
+      <div class="link-list-card">
+        <div class="link-row">
+          <div class="link-row-info">
+            <div class="link-row-title">MDN Web Docs</div>
+            <div class="link-row-url">developer.mozilla.org</div>
+          </div>
+          <button class="link-row-remove">&times;</button>
+        </div>
+        <div class="link-row">
+          <div class="link-row-info">
+            <div class="link-row-title">Can I Use — Browser Compatibility Tables</div>
+            <div class="link-row-url">caniuse.com</div>
+          </div>
+          <button class="link-row-remove">&times;</button>
+        </div>
+        <div class="link-row">
+          <div class="link-row-info">
+            <div class="link-row-title">CSS-Tricks — Tips, Tricks, and Techniques</div>
+            <div class="link-row-url">css-tricks.com</div>
+          </div>
+          <button class="link-row-remove">&times;</button>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-primary-lg" style="width:100%">Publish</button>
+    </div>
+  </div>
+
+  <!-- ════ PUBLIC ════ -->
+  <div class="page page-public">
+    <div class="success-bar">List published — your link is ready to share.</div>
+    <div class="public-wrap">
+      <div class="public-header">
+        <h2 class="public-title">frontend-resources</h2>
+        <p class="public-desc">A collection of essential tools and references for frontend developers.</p>
+        <p class="public-meta">4 links</p>
+      </div>
+      <div class="public-links">
+        <div class="public-card">
+          <div class="public-card-thumb"></div>
+          <div class="public-card-body">
+            <div class="public-card-title"><a href="#">MDN Web Docs</a></div>
+            <div class="public-card-domain">developer.mozilla.org</div>
+            <div class="public-card-desc">The definitive resource for web standards documentation, guides, and references.</div>
+          </div>
+        </div>
+        <div class="public-card">
+          <div class="public-card-thumb"></div>
+          <div class="public-card-body">
+            <div class="public-card-title"><a href="#">Can I Use</a></div>
+            <div class="public-card-domain">caniuse.com</div>
+            <div class="public-card-desc">Up-to-date browser support tables for front-end web technologies.</div>
+          </div>
+        </div>
+        <div class="public-card">
+          <div class="public-card-thumb"></div>
+          <div class="public-card-body">
+            <div class="public-card-title"><a href="#">CSS-Tricks</a></div>
+            <div class="public-card-domain">css-tricks.com</div>
+            <div class="public-card-desc">Daily articles about CSS, HTML, JavaScript, and all things web design and development.</div>
+          </div>
+        </div>
+        <div class="public-card">
+          <div class="public-card-thumb"></div>
+          <div class="public-card-body">
+            <div class="public-card-title"><a href="#">Smashing Magazine</a></div>
+            <div class="public-card-domain">smashingmagazine.com</div>
+            <div class="public-card-desc">Professional resources for web designers and developers, with a focus on useful techniques.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MY LINKS ════ -->
+  <div class="page page-mylinks">
+    <div class="mylinks-wrap">
+      <div class="mylinks-header">
+        <h2 class="mylinks-heading">My Lists</h2>
+        <button class="btn-primary">New List</button>
+      </div>
+      <div class="mylinks-table">
+        <div class="mylinks-row">
+          <div class="mylinks-slug"><a href="#">frontend-resources</a></div>
+          <div class="mylinks-count">4 links</div>
+          <div class="mylinks-actions">
+            <a class="action-edit">Edit</a>
+            <span>&middot;</span>
+            <a class="action-delete">Delete</a>
+          </div>
+        </div>
+        <div class="mylinks-row">
+          <div class="mylinks-slug"><a href="#">design-inspiration</a></div>
+          <div class="mylinks-count">7 links</div>
+          <div class="mylinks-actions">
+            <a class="action-edit">Edit</a>
+            <span>&middot;</span>
+            <a class="action-delete">Delete</a>
+          </div>
+        </div>
+        <div class="mylinks-row">
+          <div class="mylinks-slug"><a href="#">rust-getting-started</a></div>
+          <div class="mylinks-count">3 links</div>
+          <div class="mylinks-actions">
+            <a class="action-edit">Edit</a>
+            <span>&middot;</span>
+            <a class="action-delete">Delete</a>
+          </div>
+        </div>
+      </div>
+      <p class="empty-state">Lists you create will appear here.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

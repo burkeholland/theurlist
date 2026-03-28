@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Urlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #f9fafb;
+  color: #111827;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.logo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.nav-tab:hover {
+  color: #111827;
+  background: #f3f4f6;
+}
+
+.nav-tab.active {
+  color: #6366f1;
+  background: #eef2ff;
+}
+
+.btn-signin {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6366f1;
+  background: none;
+  border: 1.5px solid #6366f1;
+  padding: 6px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-signin:hover {
+  background: #6366f1;
+  color: #ffffff;
+}
+
+/* ── PAGE CONTAINER ── */
+.page {
+  display: none;
+  padding: 48px 24px 80px;
+}
+
+.page.active {
+  display: block;
+}
+
+/* ── SHARED ── */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.btn-primary {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #6366f1;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+}
+
+.btn-primary:active {
+  background: #4338ca;
+}
+
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  border: none;
+}
+
+/* ── HOME ── */
+.hero {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 16px;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 28px;
+}
+
+.hero-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.hero-input-row input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  padding: 10px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  transition: border-color 0.15s ease;
+}
+
+.hero-input-row input::placeholder {
+  color: #9ca3af;
+}
+
+.hero-input-row input:focus {
+  border-color: #6366f1;
+}
+
+.hero-input-row .btn-primary {
+  padding: 10px 22px;
+  flex-shrink: 0;
+}
+
+.hero-muted {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+/* Features */
+.features {
+  max-width: 760px;
+  margin: 56px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.feature-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 24px 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.feature-card.coral::before { background: #f87171; }
+.feature-card.azure::before { background: #60a5fa; }
+.feature-card.sage::before  { background: #86efac; }
+
+.feature-card h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.feature-card p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
+/* ── COMPOSE ── */
+.compose-card {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.compose-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  padding: 9px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #6366f1;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+
+.input-prefix-wrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.input-prefix-wrap:focus-within {
+  border-color: #6366f1;
+}
+
+.input-prefix {
+  font-size: 0.9375rem;
+  color: #9ca3af;
+  padding: 9px 0 9px 12px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.input-prefix-wrap input {
+  border: none;
+  padding-left: 2px;
+  border-radius: 0;
+}
+
+.input-prefix-wrap input:focus {
+  border-color: transparent;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.links-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.links-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.add-link-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.add-link-row input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 8px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  transition: border-color 0.15s ease;
+}
+
+.add-link-row input:focus {
+  border-color: #6366f1;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #ffffff;
+}
+
+.drag-handle {
+  color: #d1d5db;
+  font-size: 0.875rem;
+  cursor: grab;
+  user-select: none;
+  letter-spacing: 1px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.link-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.link-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.link-thumb svg {
+  width: 20px;
+  height: 20px;
+  color: #d1d5db;
+}
+
+.link-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-info .link-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-info .link-domain {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-family: 'DM Mono', monospace;
+}
+
+.link-remove {
+  background: none;
+  border: none;
+  color: #d1d5db;
+  font-size: 1.125rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.link-remove:hover {
+  color: #ef4444;
+}
+
+.compose-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.compose-footer .btn-primary {
+  padding: 10px 28px;
+}
+
+/* ── PUBLIC ── */
+.public-card {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+}
+
+.success-bar {
+  background: #f0fdf4;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.success-bar .success-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #166534;
+}
+
+.success-check {
+  width: 18px;
+  height: 18px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.6875rem;
+  flex-shrink: 0;
+}
+
+.btn-copy {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #166534;
+  background: #dcfce7;
+  border: none;
+  padding: 5px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-copy:hover {
+  background: #bbf7d0;
+}
+
+.public-body {
+  padding: 28px 28px 32px;
+}
+
+.public-body h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.public-meta {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.public-count {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin-bottom: 20px;
+}
+
+.link-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  transition: box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.grid-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.grid-card-img {
+  height: 140px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.grid-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.grid-card-img .placeholder-icon {
+  color: #d1d5db;
+}
+
+.grid-card-body {
+  padding: 12px 14px 14px;
+}
+
+.grid-card-body .gc-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid-card-body .gc-url {
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── MY LINKS ── */
+.mylinks-card {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.mylinks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.mylinks-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.list-row:last-of-type {
+  border-bottom: none;
+}
+
+.list-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.list-dot.dot-indigo { background: #6366f1; }
+.list-dot.dot-coral  { background: #f87171; }
+.list-dot.dot-amber  { background: #fbbf24; }
+
+.list-slug {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #6366f1;
+  text-decoration: none;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.list-slug:hover {
+  text-decoration: underline;
+}
+
+.list-desc {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.list-count {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.list-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.list-actions button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+
+.list-actions button:hover {
+  color: #111827;
+}
+
+.list-actions button.delete:hover {
+  color: #ef4444;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.empty-state a {
+  color: #6366f1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.empty-state a:hover {
+  text-decoration: underline;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .features {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+  }
+
+  .link-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-tabs {
+    gap: 2px;
+  }
+
+  .nav-tab {
+    padding: 6px 8px;
+    font-size: 0.8125rem;
+  }
+
+  .compose-card,
+  .public-body,
+  .mylinks-card {
+    padding: 20px;
+  }
+
+  .list-row {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+
+  .list-desc {
+    order: 5;
+    flex-basis: 100%;
+    padding-left: 18px;
+  }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-left">
+      <div class="logo">The Urlist</div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="home">Home</button>
+        <button class="nav-tab" data-tab="compose">Compose</button>
+        <button class="nav-tab" data-tab="public">Public</button>
+        <button class="nav-tab" data-tab="mylinks">My Lists</button>
+      </div>
+    </div>
+    <button class="btn-signin">Sign In</button>
+  </div>
+</nav>
+
+<!-- ════════════ HOME ════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <h1>Your links, organized.</h1>
+    <p>Create curated collections with rich previews and easy sharing.</p>
+    <div class="hero-input-row">
+      <input type="text" placeholder="Paste a URL">
+      <button class="btn-primary">Go</button>
+    </div>
+    <div class="hero-muted">Free to use, no sign-up required</div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card card coral">
+      <h3>Rich Previews</h3>
+      <p>Every link gets a title, description, and image pulled automatically from the page.</p>
+    </div>
+    <div class="feature-card card azure">
+      <h3>Custom URLs</h3>
+      <p>Choose a memorable slug for each list so it's easy to share and remember.</p>
+    </div>
+    <div class="feature-card card sage">
+      <h3>Drag to Reorder</h3>
+      <p>Arrange links in exactly the order that makes sense for your audience.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ COMPOSE ════════════ -->
+<div class="page" id="page-compose">
+  <div class="compose-card card">
+    <h2>Create a new list</h2>
+
+    <div class="form-group">
+      <label>Custom URL</label>
+      <div class="input-prefix-wrap">
+        <span class="input-prefix">urlist.app/</span>
+        <input type="text" placeholder="my-reading-list" value="design-tools-2025">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea placeholder="What's this list about?" id="compose-desc">The best design tools and resources I've found this year.</textarea>
+      <div class="char-counter"><span id="char-count">56</span> / 280</div>
+    </div>
+
+    <hr class="divider" style="margin: 22px 0 20px;">
+
+    <div class="links-header">
+      <h3>Links</h3>
+    </div>
+
+    <div class="add-link-row">
+      <input type="text" placeholder="https://example.com">
+      <button class="btn-primary" style="padding: 8px 18px;">Add</button>
+    </div>
+
+    <div class="link-list">
+      <div class="link-item">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="link-thumb">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="link-info">
+          <div class="link-title">Figma — The Collaborative Interface Design Tool</div>
+          <div class="link-domain">figma.com</div>
+        </div>
+        <button class="link-remove" aria-label="Remove">&times;</button>
+      </div>
+
+      <div class="link-item">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="link-thumb">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="link-info">
+          <div class="link-title">Linear — Plan and Build Products</div>
+          <div class="link-domain">linear.app</div>
+        </div>
+        <button class="link-remove" aria-label="Remove">&times;</button>
+      </div>
+
+      <div class="link-item">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="link-thumb">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="link-info">
+          <div class="link-title">Raindrop.io — All-in-one Bookmark Manager</div>
+          <div class="link-domain">raindrop.io</div>
+        </div>
+        <button class="link-remove" aria-label="Remove">&times;</button>
+      </div>
+    </div>
+
+    <div class="compose-footer">
+      <button class="btn-primary">Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ PUBLIC ════════════ -->
+<div class="page" id="page-public">
+  <div class="public-card card">
+    <div class="success-bar">
+      <span class="success-text">
+        <span class="success-check">&#10003;</span>
+        Published!
+      </span>
+      <button class="btn-copy">Copy link</button>
+    </div>
+    <div class="public-body">
+      <h2>design-tools-2025</h2>
+      <div class="public-meta">The best design tools and resources I've found this year.</div>
+      <div class="public-count">4 links</div>
+      <hr class="divider" style="margin-bottom: 20px;">
+      <div class="link-grid">
+
+        <div class="grid-card">
+          <div class="grid-card-img">
+            <svg class="placeholder-icon" width="28" height="28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+          </div>
+          <div class="grid-card-body">
+            <div class="gc-title">Figma — Collaborative Design</div>
+            <div class="gc-url">figma.com</div>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div class="grid-card-img">
+            <svg class="placeholder-icon" width="28" height="28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+          </div>
+          <div class="grid-card-body">
+            <div class="gc-title">Linear — Plan and Build</div>
+            <div class="gc-url">linear.app</div>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div class="grid-card-img">
+            <svg class="placeholder-icon" width="28" height="28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+          </div>
+          <div class="grid-card-body">
+            <div class="gc-title">Raindrop.io — Bookmarks</div>
+            <div class="gc-url">raindrop.io</div>
+          </div>
+        </div>
+
+        <div class="grid-card">
+          <div class="grid-card-img">
+            <svg class="placeholder-icon" width="28" height="28" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+          </div>
+          <div class="grid-card-body">
+            <div class="gc-title">Excalidraw — Whiteboard</div>
+            <div class="gc-url">excalidraw.com</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MY LINKS ════════════ -->
+<div class="page" id="page-mylinks">
+  <div class="mylinks-card card">
+    <div class="mylinks-header">
+      <h2>My Lists</h2>
+      <button class="btn-primary">New List</button>
+    </div>
+
+    <div class="list-row">
+      <span class="list-dot dot-indigo"></span>
+      <a class="list-slug">design-tools-2025</a>
+      <span class="list-desc">The best design tools and resources I've found…</span>
+      <span class="list-count">4 links</span>
+      <div class="list-actions">
+        <button>Edit</button>
+        <button class="delete">Delete</button>
+      </div>
+    </div>
+
+    <div class="list-row">
+      <span class="list-dot dot-coral"></span>
+      <a class="list-slug">frontend-reads</a>
+      <span class="list-desc">Articles and talks on modern frontend dev</span>
+      <span class="list-count">7 links</span>
+      <div class="list-actions">
+        <button>Edit</button>
+        <button class="delete">Delete</button>
+      </div>
+    </div>
+
+    <div class="list-row">
+      <span class="list-dot dot-amber"></span>
+      <a class="list-slug">travel-japan</a>
+      <span class="list-desc">Planning resources for a trip to Japan</span>
+      <span class="list-count">3 links</span>
+      <div class="list-actions">
+        <button>Edit</button>
+        <button class="delete">Delete</button>
+      </div>
+    </div>
+
+    <div class="empty-state" style="display: none;">
+      <p>You haven't created any lists yet.</p>
+      <p style="margin-top: 6px;"><a href="#">Create your first list</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching
+const tabs = document.querySelectorAll('.nav-tab');
+const pages = document.querySelectorAll('.page');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    pages.forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('page-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Character counter
+const desc = document.getElementById('compose-desc');
+const counter = document.getElementById('char-count');
+
+if (desc && counter) {
+  const update = () => { counter.textContent = desc.value.length; };
+  desc.addEventListener('input', update);
+  update();
+}
+</script>
+</body>
+</html>

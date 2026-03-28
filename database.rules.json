@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "lists": {
+      "$listId": {
+        ".read": true,
+        ".write": false
+      }
+    },
+    "links": {
+      "$listId": {
+        ".read": true,
+        ".write": false
+      }
+    },
+    "slugs": {
+      "$slug": {
+        ".read": true,
+        ".write": false
+      }
+    },
+    "userLists": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": false
+      }
+    },
+    "_rateLimits": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Urlist</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #111827;
+    background: #ffffff;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    border-bottom: 1px solid #d1d5db;
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .nav-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .nav-logo {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #111827;
+    text-decoration: none;
+    margin-right: auto;
+    letter-spacing: -0.01em;
+  }
+  .nav-link {
+    font-size: 0.9rem;
+    color: #6b7280;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { color: #111827; font-weight: 600; }
+  .nav-signin {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: #111827;
+    border: none;
+    padding: 7px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .nav-signin:hover { background: #1f2937; }
+
+  /* ---- TABS (hidden, for JS) ---- */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---- BUTTONS ---- */
+  .btn-dark {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: #111827;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-dark:hover { background: #1f2937; }
+  .btn-dark-sm {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: #111827;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-dark-sm:hover { background: #1f2937; }
+
+  /* ---- INPUTS ---- */
+  input[type="text"], input[type="url"], textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    color: #111827;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  input[type="text"]:focus, input[type="url"]:focus, textarea:focus {
+    border-color: #111827;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+  .input-hint {
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+
+  /* ---- HOME: HERO ---- */
+  .hero {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 80px 24px 56px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+  .hero .subtitle {
+    font-size: 1.1rem;
+    color: #6b7280;
+    margin-top: 12px;
+  }
+  .hero-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 32px;
+  }
+  .hero-input-row input {
+    flex: 1;
+    height: 52px;
+    font-size: 1rem;
+  }
+  .hero-input-row .btn-dark {
+    height: 52px;
+    white-space: nowrap;
+    border-radius: 10px;
+    padding: 0 24px;
+  }
+  .hero-fine-print {
+    font-size: 0.825rem;
+    color: #9ca3af;
+    margin-top: 40px;
+  }
+
+  /* ---- HOME: FEATURES ---- */
+  .features-section {
+    background: #f3f4f6;
+    padding: 48px 24px;
+    margin-top: 16px;
+  }
+  .features-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  .feature-item h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .feature-item p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.45;
+  }
+
+  /* ---- COMPOSE ---- */
+  .compose-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .compose-wrap h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+  }
+  .field-group { margin-bottom: 24px; }
+  .url-prefix-input {
+    display: flex;
+    align-items: center;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .url-prefix-input:focus-within { border-color: #111827; }
+  .url-prefix-input .prefix {
+    font-size: 0.95rem;
+    color: #6b7280;
+    padding: 12px 0 12px 16px;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .url-prefix-input input {
+    border: none;
+    border-radius: 0;
+    padding: 12px 16px 12px 0;
+    font-size: 0.95rem;
+  }
+  .url-prefix-input input:focus { border-color: transparent; }
+  .char-counter {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    text-align: right;
+    margin-top: 4px;
+  }
+  .compose-divider {
+    border: none;
+    border-top: 2px solid #e5e7eb;
+    margin: 32px 0;
+  }
+  .links-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .links-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  .links-header .count {
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+  .add-link-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .add-link-row input { flex: 1; }
+
+  /* Link items (compose) */
+  .link-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 12px;
+  }
+  .link-item:first-child { border-top: 1px solid #e5e7eb; }
+  .grip {
+    color: #9ca3af;
+    font-size: 0.8rem;
+    cursor: grab;
+    user-select: none;
+    letter-spacing: 2px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .link-item-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .link-item-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .link-item-domain {
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+  .link-remove {
+    font-size: 1.1rem;
+    color: #9ca3af;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .link-remove:hover { color: #ef4444; background: #fef2f2; }
+
+  .publish-btn {
+    width: 100%;
+    margin-top: 32px;
+    height: 48px;
+    font-size: 1rem;
+  }
+
+  /* ---- PUBLIC ---- */
+  .public-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .published-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 28px;
+  }
+  .published-banner .status {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #15803d;
+  }
+  .copy-link-btn {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: #15803d;
+    background: none;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .copy-link-btn:hover { background: #dcfce7; }
+  .public-wrap .list-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+  .public-wrap .list-desc {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+  .public-wrap .list-meta {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-bottom: 24px;
+  }
+  .public-divider {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin-bottom: 24px;
+  }
+  .public-link {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 16px;
+    background: #ffffff;
+    margin-bottom: 8px;
+  }
+  .public-link-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .public-link-title a {
+    color: #0ea5e9;
+    text-decoration: none;
+    transition: text-decoration 0.15s;
+  }
+  .public-link-title a:hover { text-decoration: underline; }
+  .public-link-url {
+    font-size: 0.775rem;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", monospace;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+  .public-link-desc {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 6px;
+  }
+
+  /* ---- MY LINKS ---- */
+  .mylinks-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .mylinks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .mylinks-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .mylinks-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 16px;
+  }
+  .mylinks-row:first-child { border-top: 1px solid #e5e7eb; }
+  .mylinks-name {
+    flex: 1;
+    min-width: 0;
+  }
+  .mylinks-name a {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0ea5e9;
+    text-decoration: none;
+  }
+  .mylinks-name a:hover { text-decoration: underline; }
+  .mylinks-count {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    flex-shrink: 0;
+  }
+  .mylinks-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .mylinks-actions a {
+    font-size: 0.825rem;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .action-edit { color: #6b7280; }
+  .action-edit:hover { background: #f3f4f6; color: #111827; }
+  .action-sep { color: #d1d5db; font-size: 0.8rem; user-select: none; }
+  .action-delete { color: #ef4444; }
+  .action-delete:hover { background: #fef2f2; }
+
+  .empty-state {
+    text-align: center;
+    padding: 64px 24px;
+    color: #9ca3af;
+  }
+  .empty-state p { font-size: 0.95rem; margin-bottom: 8px; }
+  .empty-state a {
+    color: #0ea5e9;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .empty-state a:hover { text-decoration: underline; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .hero-input-row { flex-direction: column; }
+    .hero-input-row .btn-dark { height: 48px; border-radius: 10px; }
+    .features-inner { grid-template-columns: 1fr; gap: 24px; }
+    .nav-inner { gap: 20px; }
+    .mylinks-row { flex-wrap: wrap; }
+    .mylinks-actions { width: 100%; justify-content: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" onclick="showTab('home');return false;">The Urlist</a>
+    <a class="nav-link" data-tab="compose" onclick="showTab('compose')">Compose</a>
+    <a class="nav-link" data-tab="public" onclick="showTab('public')">Public</a>
+    <a class="nav-link" data-tab="mylinks" onclick="showTab('mylinks')">My Lists</a>
+    <button class="nav-signin">Sign In</button>
+  </div>
+</nav>
+
+<!-- ============ HOME ============ -->
+<div id="tab-home" class="tab-panel active">
+  <div class="hero">
+    <h1>Share your favorite links</h1>
+    <p class="subtitle">Create a list. Add links. Share the URL. It's that simple.</p>
+    <div class="hero-input-row">
+      <input type="url" placeholder="Paste a URL to start">
+      <button class="btn-dark">Create a list</button>
+    </div>
+    <p class="hero-fine-print">No sign-up needed · Free forever</p>
+  </div>
+
+  <div class="features-section">
+    <div class="features-inner">
+      <div class="feature-item">
+        <h3>Rich link previews</h3>
+        <p>Titles and descriptions are fetched automatically when you paste a URL.</p>
+      </div>
+      <div class="feature-item">
+        <h3>Custom short URLs</h3>
+        <p>Pick a memorable slug like /design-tools so people remember your list.</p>
+      </div>
+      <div class="feature-item">
+        <h3>Drag to reorder</h3>
+        <p>Put the best links first. Rearrange them anytime with drag and drop.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ COMPOSE ============ -->
+<div id="tab-compose" class="tab-panel">
+  <div class="compose-wrap">
+    <h1>New list</h1>
+
+    <div class="field-group">
+      <label for="custom-url">Custom URL</label>
+      <div class="url-prefix-input">
+        <span class="prefix">urlist.app/</span>
+        <input type="text" id="custom-url" value="awesome-frontend-tools" placeholder="your-list-name">
+      </div>
+      <p class="input-hint" style="color:#15803d;">&#10003; Available</p>
+    </div>
+
+    <div class="field-group">
+      <label for="list-desc">Description</label>
+      <textarea id="list-desc" maxlength="280" placeholder="What is this list about?">A hand-picked collection of the best frontend development tools, libraries, and resources for building modern web apps.</textarea>
+      <p class="char-counter"><span id="char-count">136</span> / 280</p>
+    </div>
+
+    <hr class="compose-divider">
+
+    <div class="links-header">
+      <h2>Links</h2>
+      <span class="count">(3)</span>
+    </div>
+
+    <div class="add-link-row">
+      <input type="url" placeholder="Paste a URL and press Add">
+      <button class="btn-dark-sm">Add</button>
+    </div>
+
+    <div class="link-item">
+      <span class="grip">⋮⋮</span>
+      <div class="link-item-info">
+        <div class="link-item-title">Vite — Next Generation Frontend Tooling</div>
+        <div class="link-item-domain">vitejs.dev</div>
+      </div>
+      <button class="link-remove" aria-label="Remove link">&times;</button>
+    </div>
+    <div class="link-item">
+      <span class="grip">⋮⋮</span>
+      <div class="link-item-info">
+        <div class="link-item-title">Tailwind CSS — Rapidly build modern websites</div>
+        <div class="link-item-domain">tailwindcss.com</div>
+      </div>
+      <button class="link-remove" aria-label="Remove link">&times;</button>
+    </div>
+    <div class="link-item">
+      <span class="grip">⋮⋮</span>
+      <div class="link-item-info">
+        <div class="link-item-title">TypeScript: JavaScript With Syntax For Types</div>
+        <div class="link-item-domain">typescriptlang.org</div>
+      </div>
+      <button class="link-remove" aria-label="Remove link">&times;</button>
+    </div>
+
+    <button class="btn-dark publish-btn">Publish</button>
+  </div>
+</div>
+
+<!-- ============ PUBLIC ============ -->
+<div id="tab-public" class="tab-panel">
+  <div class="public-wrap">
+    <div class="published-banner">
+      <span class="status">&#10003; Published</span>
+      <button class="copy-link-btn">Copy link</button>
+    </div>
+
+    <h1 class="list-title">/awesome-frontend-tools</h1>
+    <p class="list-desc">A hand-picked collection of the best frontend development tools, libraries, and resources for building modern web apps.</p>
+    <p class="list-meta">5 links · Updated today</p>
+
+    <hr class="public-divider">
+
+    <div class="public-link">
+      <div class="public-link-title"><a href="#">Vite — Next Generation Frontend Tooling</a></div>
+      <div class="public-link-url">https://vitejs.dev</div>
+      <div class="public-link-desc">Vite is a build tool that aims to provide a faster and leaner development experience for modern web projects.</div>
+    </div>
+
+    <div class="public-link">
+      <div class="public-link-title"><a href="#">Tailwind CSS — Rapidly build modern websites</a></div>
+      <div class="public-link-url">https://tailwindcss.com</div>
+      <div class="public-link-desc">A utility-first CSS framework packed with classes that can be composed to build any design, directly in your markup.</div>
+    </div>
+
+    <div class="public-link">
+      <div class="public-link-title"><a href="#">TypeScript: JavaScript With Syntax For Types</a></div>
+      <div class="public-link-url">https://www.typescriptlang.org</div>
+      <div class="public-link-desc">TypeScript extends JavaScript by adding types, giving you better tooling at any scale.</div>
+    </div>
+
+    <div class="public-link">
+      <div class="public-link-title"><a href="#">Prettier — Opinionated Code Formatter</a></div>
+      <div class="public-link-url">https://prettier.io</div>
+      <div class="public-link-desc">An opinionated code formatter that supports many languages and integrates with most editors.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MY LINKS ============ -->
+<div id="tab-mylinks" class="tab-panel">
+  <div class="mylinks-wrap">
+    <div class="mylinks-header">
+      <h1>My lists</h1>
+      <button class="btn-dark-sm">New list</button>
+    </div>
+
+    <div class="mylinks-row">
+      <div class="mylinks-name"><a href="#">/design-resources</a></div>
+      <span class="mylinks-count">4 links</span>
+      <div class="mylinks-actions">
+        <a class="action-edit">Edit</a>
+        <span class="action-sep">·</span>
+        <a class="action-delete">Delete</a>
+      </div>
+    </div>
+    <div class="mylinks-row">
+      <div class="mylinks-name"><a href="#">/awesome-frontend-tools</a></div>
+      <span class="mylinks-count">5 links</span>
+      <div class="mylinks-actions">
+        <a class="action-edit">Edit</a>
+        <span class="action-sep">·</span>
+        <a class="action-delete">Delete</a>
+      </div>
+    </div>
+    <div class="mylinks-row">
+      <div class="mylinks-name"><a href="#">/weekly-reads-june</a></div>
+      <span class="mylinks-count">8 links</span>
+      <div class="mylinks-actions">
+        <a class="action-edit">Edit</a>
+        <span class="action-sep">·</span>
+        <a class="action-delete">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    document.querySelectorAll('.nav-link').forEach(function(l) {
+      l.classList.remove('active');
+    });
+    var panel = document.getElementById('tab-' + name);
+    if (panel) panel.classList.add('active');
+    var link = document.querySelector('.nav-link[data-tab="' + name + '"]');
+    if (link) link.classList.add('active');
+  }
+
+  // Character counter
+  var textarea = document.getElementById('list-desc');
+  var counter = document.getElementById('char-count');
+  if (textarea && counter) {
+    counter.textContent = textarea.value.length;
+    textarea.addEventListener('input', function() {
+      counter.textContent = textarea.value.length;
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Urlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #111827;
+  background: #ffffff;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== NAV ========== */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.nav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: none;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.logo-dot {
+  color: #ff7f50;
+  margin-left: 1px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #6b7280;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: #111827;
+  background: #f9fafb;
+}
+
+.nav-link.active {
+  color: #0ea5e9;
+  font-weight: 500;
+}
+
+.nav-right {
+  flex-shrink: 0;
+}
+
+.btn-signin {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-signin:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #111827;
+}
+
+.hamburger svg {
+  display: block;
+}
+
+/* Mobile nav */
+.mobile-menu {
+  display: none;
+  padding: 8px 24px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.mobile-menu.open {
+  display: block;
+}
+
+.mobile-menu .nav-link {
+  display: block;
+  padding: 10px 0;
+  font-size: 0.9375rem;
+}
+
+.mobile-menu .btn-signin {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* ========== MAIN CONTENT ========== */
+main {
+  flex: 1;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+/* ========== HOME ========== */
+.home-hero {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 72px 24px 0;
+  text-align: center;
+}
+
+.home-hero h1 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.home-hero .subtext {
+  font-size: 1.05rem;
+  color: #6b7280;
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+.home-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.home-input-row input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.home-input-row input::placeholder {
+  color: #9ca3af;
+}
+
+.home-input-row input:focus {
+  border-color: #0ea5e9;
+}
+
+.btn-primary {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: #0ea5e9;
+  border: none;
+  padding: 0 20px;
+  height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: #0284c7;
+}
+
+.home-note {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 12px;
+}
+
+/* Features */
+.home-features {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 80px 24px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.feature h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.feature p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.55;
+}
+
+/* ========== COMPOSE ========== */
+.compose-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.compose-page h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.015em;
+}
+
+.form-group {
+  margin-top: 24px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.input-prefix-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.input-prefix-wrap:focus-within {
+  border-color: #0ea5e9;
+}
+
+.input-prefix {
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: #9ca3af;
+  padding: 0 0 0 14px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  user-select: none;
+  background: #ffffff;
+}
+
+.input-prefix-wrap input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  height: 44px;
+  padding: 0 14px 0 0;
+  border: none;
+  outline: none;
+  color: #111827;
+  background: transparent;
+  min-width: 0;
+}
+
+.input-prefix-wrap input::placeholder {
+  color: #9ca3af;
+}
+
+.availability {
+  display: flex;
+  align-items: center;
+  padding-right: 12px;
+  flex-shrink: 0;
+}
+
+.availability-ok {
+  width: 18px;
+  height: 18px;
+  color: #16a34a;
+}
+
+.form-textarea {
+  font-family: inherit;
+  font-size: 0.9375rem;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease;
+}
+
+.form-textarea:focus {
+  border-color: #0ea5e9;
+}
+
+.char-count {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.compose-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 32px 0;
+}
+
+.add-links-header {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.add-link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.add-link-row input {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  outline: none;
+  color: #111827;
+  transition: border-color 0.15s ease;
+}
+
+.add-link-row input::placeholder {
+  color: #9ca3af;
+}
+
+.add-link-row input:focus {
+  border-color: #0ea5e9;
+}
+
+/* Link items */
+.link-list {
+  margin-top: 16px;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.link-item:last-child {
+  border-bottom: none;
+}
+
+.drag-handle {
+  color: #d1d5db;
+  font-size: 0.8125rem;
+  cursor: grab;
+  user-select: none;
+  letter-spacing: 1px;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+
+.link-thumb {
+  width: 40px;
+  height: 40px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.link-thumb span {
+  font-size: 0.625rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 500;
+}
+
+.link-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-url {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.link-remove {
+  background: none;
+  border: none;
+  color: #d1d5db;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.link-remove:hover {
+  color: #ef4444;
+}
+
+.btn-publish {
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: #0ea5e9;
+  border: none;
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 32px;
+  transition: background 0.15s ease;
+}
+
+.btn-publish:hover {
+  background: #0284c7;
+}
+
+/* ========== PUBLIC ========== */
+.public-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.success-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.success-banner p {
+  font-size: 0.875rem;
+  color: #166534;
+}
+
+.btn-copy {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #166534;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.btn-copy:hover {
+  opacity: 0.7;
+}
+
+.public-page h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.015em;
+}
+
+.public-description {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.public-meta {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin-top: 6px;
+}
+
+.public-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 24px 0;
+}
+
+.public-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.public-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.public-card:hover {
+  border-color: #d1d5db;
+}
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.card-image span {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #0ea5e9;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.card-title:hover {
+  color: #0284c7;
+}
+
+.card-url {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-desc {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ========== MY LINKS ========== */
+.mylinks-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.mylinks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mylinks-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.015em;
+}
+
+.btn-new {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: #0ea5e9;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.btn-new:hover {
+  background: #0284c7;
+}
+
+.my-list-items {
+  margin-top: 24px;
+}
+
+.my-list-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.my-list-item:first-child {
+  padding-top: 0;
+}
+
+.my-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-list-slug {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #0ea5e9;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.my-list-slug:hover {
+  color: #0284c7;
+}
+
+.my-list-desc {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.my-list-meta {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 3px;
+}
+
+.my-list-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.btn-text {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+
+.btn-text:hover {
+  opacity: 0.7;
+}
+
+.btn-text-gray {
+  color: #6b7280;
+}
+
+.btn-text-red {
+  color: #dc2626;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+}
+
+.empty-state p {
+  font-size: 0.9375rem;
+  color: #9ca3af;
+}
+
+.empty-state a {
+  font-size: 0.9375rem;
+  color: #0ea5e9;
+  text-decoration: none;
+  margin-top: 8px;
+  display: inline-block;
+  transition: color 0.15s ease;
+}
+
+.empty-state a:hover {
+  color: #0284c7;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 24px;
+  text-align: center;
+}
+
+.footer-inner {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+.footer-inner .logo {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+
+  .nav-right .btn-signin {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .home-hero {
+    padding-top: 48px;
+  }
+
+  .home-hero h1 {
+    font-size: 1.75rem;
+  }
+
+  .home-features {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 48px;
+  }
+
+  .feature {
+    text-align: center;
+  }
+
+  .my-list-item {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .my-list-actions {
+    padding-top: 0;
+  }
+
+  .success-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-left">
+      <a href="#" class="logo" onclick="switchTab('home'); return false;">The Urlist<span class="logo-dot">.</span></a>
+      <div class="nav-links">
+        <a class="nav-link active" data-tab="home" onclick="switchTab('home')">Home</a>
+        <a class="nav-link" data-tab="compose" onclick="switchTab('compose')">Compose</a>
+        <a class="nav-link" data-tab="public" onclick="switchTab('public')">Public</a>
+        <a class="nav-link" data-tab="mylinks" onclick="switchTab('mylinks')">My Links</a>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
+      </button>
+      <button class="btn-signin">Sign in</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a class="nav-link active" data-tab="home" onclick="switchTab('home'); closeMobile();">Home</a>
+    <a class="nav-link" data-tab="compose" onclick="switchTab('compose'); closeMobile();">Compose</a>
+    <a class="nav-link" data-tab="public" onclick="switchTab('public'); closeMobile();">Public</a>
+    <a class="nav-link" data-tab="mylinks" onclick="switchTab('mylinks'); closeMobile();">My Links</a>
+    <button class="btn-signin">Sign in</button>
+  </div>
+</nav>
+
+<!-- ===== HOME ===== -->
+<main>
+<section class="page active" id="page-home">
+  <div class="home-hero">
+    <h1>Create and share link collections</h1>
+    <p class="subtext">Organize your links into shareable lists with rich previews.</p>
+    <div class="home-input-row">
+      <input type="url" placeholder="Paste a URL to get started">
+      <button class="btn-primary">Go</button>
+    </div>
+    <p class="home-note">No sign-up required</p>
+  </div>
+  <div class="home-features">
+    <div class="feature">
+      <h3>Rich previews</h3>
+      <p>Every link gets an auto-generated preview with title, description, and image pulled from the page.</p>
+    </div>
+    <div class="feature">
+      <h3>Custom short URLs</h3>
+      <p>Pick a memorable slug for your list so it&rsquo;s easy to share and remember.</p>
+    </div>
+    <div class="feature">
+      <h3>Drag to reorder</h3>
+      <p>Arrange links in whatever order makes sense. Just drag and drop to reorganize.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMPOSE ===== -->
+<section class="page" id="page-compose">
+  <div class="compose-page">
+    <h1>Create a new list</h1>
+
+    <div class="form-group">
+      <label class="form-label">Custom URL</label>
+      <div class="input-prefix-wrap">
+        <span class="input-prefix">urlist.app/</span>
+        <input type="text" placeholder="my-awesome-list" value="awesome-frontend-tools">
+        <div class="availability">
+          <svg class="availability-ok" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description (optional)</label>
+      <textarea class="form-textarea" rows="3" placeholder="What's this list about?">A curated list of the best frontend developer tools for 2025.</textarea>
+      <div class="char-count">62/280</div>
+    </div>
+
+    <hr class="compose-divider">
+
+    <div class="add-links-header">Add links</div>
+    <div class="add-link-row">
+      <input type="url" placeholder="https://example.com">
+      <button class="btn-primary">Add</button>
+    </div>
+
+    <div class="link-list">
+      <div class="link-item">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="link-thumb"><span>vite</span></div>
+        <div class="link-info">
+          <div class="link-title">Vite — Next Generation Frontend Tooling</div>
+          <div class="link-url">vitejs.dev</div>
+        </div>
+        <button class="link-remove">&times;</button>
+      </div>
+      <div class="link-item">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="link-thumb"><span>tw</span></div>
+        <div class="link-info">
+          <div class="link-title">Tailwind CSS — Rapidly build modern websites</div>
+          <div class="link-url">tailwindcss.com</div>
+        </div>
+        <button class="link-remove">&times;</button>
+      </div>
+      <div class="link-item">
+        <span class="drag-handle">⋮⋮</span>
+        <div class="link-thumb"><span>linear</span></div>
+        <div class="link-info">
+          <div class="link-title">Linear — Plan and build products</div>
+          <div class="link-url">linear.app</div>
+        </div>
+        <button class="link-remove">&times;</button>
+      </div>
+    </div>
+
+    <button class="btn-publish">Publish</button>
+  </div>
+</section>
+
+<!-- ===== PUBLIC ===== -->
+<section class="page" id="page-public">
+  <div class="public-page">
+    <div class="success-banner">
+      <p>List published! Copy the URL to share it.</p>
+      <button class="btn-copy">Copy</button>
+    </div>
+
+    <h1>/awesome-frontend-tools</h1>
+    <p class="public-description">A curated list of the best frontend developer tools for 2025.</p>
+    <p class="public-meta">5 links</p>
+
+    <hr class="public-divider">
+
+    <div class="public-cards">
+      <div class="public-card">
+        <div class="card-image"><span>vitejs.dev</span></div>
+        <div class="card-body">
+          <a href="#" class="card-title">Vite — Next Generation Frontend Tooling</a>
+          <div class="card-url">https://vitejs.dev</div>
+          <p class="card-desc">Get ready for a development environment that can finally catch up with you.</p>
+        </div>
+      </div>
+      <div class="public-card">
+        <div class="card-image"><span>tailwindcss.com</span></div>
+        <div class="card-body">
+          <a href="#" class="card-title">Tailwind CSS — Rapidly build modern websites</a>
+          <div class="card-url">https://tailwindcss.com</div>
+          <p class="card-desc">A utility-first CSS framework for rapidly building custom user interfaces.</p>
+        </div>
+      </div>
+      <div class="public-card">
+        <div class="card-image"><span>linear.app</span></div>
+        <div class="card-body">
+          <a href="#" class="card-title">Linear — Plan and build products</a>
+          <div class="card-url">https://linear.app</div>
+          <p class="card-desc">Meet the new standard for modern software development. Streamline issues, projects, and roadmaps.</p>
+        </div>
+      </div>
+      <div class="public-card">
+        <div class="card-image"><span>vercel.com</span></div>
+        <div class="card-body">
+          <a href="#" class="card-title">Vercel — Build and deploy the best web experiences</a>
+          <div class="card-url">https://vercel.com</div>
+          <p class="card-desc">Vercel's frontend cloud gives developers frameworks, workflows, and infrastructure.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MY LINKS ===== -->
+<section class="page" id="page-mylinks">
+  <div class="mylinks-page">
+    <div class="mylinks-header">
+      <h1>My Links</h1>
+      <button class="btn-new" onclick="switchTab('compose')">Create New List</button>
+    </div>
+
+    <div class="my-list-items">
+      <div class="my-list-item">
+        <div class="my-list-info">
+          <a href="#" class="my-list-slug" onclick="switchTab('public'); return false;">/awesome-frontend-tools</a>
+          <div class="my-list-desc">A curated list of the best frontend developer tools for 2025.</div>
+          <div class="my-list-meta">5 links</div>
+        </div>
+        <div class="my-list-actions">
+          <button class="btn-text btn-text-gray">Edit</button>
+          <button class="btn-text btn-text-red">Delete</button>
+        </div>
+      </div>
+      <div class="my-list-item">
+        <div class="my-list-info">
+          <a href="#" class="my-list-slug">/design-inspiration</a>
+          <div class="my-list-desc">Websites and portfolios that showcase outstanding visual design and interaction.</div>
+          <div class="my-list-meta">12 links</div>
+        </div>
+        <div class="my-list-actions">
+          <button class="btn-text btn-text-gray">Edit</button>
+          <button class="btn-text btn-text-red">Delete</button>
+        </div>
+      </div>
+      <div class="my-list-item">
+        <div class="my-list-info">
+          <a href="#" class="my-list-slug">/reading-list-june</a>
+          <div class="my-list-desc">Articles and blog posts saved for reading in June 2025.</div>
+          <div class="my-list-meta">8 links</div>
+        </div>
+        <div class="my-list-actions">
+          <button class="btn-text btn-text-gray">Edit</button>
+          <button class="btn-text btn-text-red">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state (hidden by default — shown when no lists exist) -->
+    <!--
+    <div class="empty-state">
+      <p>No lists yet.</p>
+      <a href="#" onclick="switchTab('compose'); return false;">Create your first list</a>
+    </div>
+    -->
+  </div>
+</section>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-inner">
+    <span class="logo">The Urlist<span class="logo-dot">.</span></span> &nbsp;&middot;&nbsp; &copy; 2025
+  </div>
+</footer>
+
+<script>
+function switchTab(tab) {
+  // Update pages
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  document.getElementById('page-' + tab).classList.add('active');
+
+  // Update nav links (desktop + mobile)
+  document.querySelectorAll('.nav-link').forEach(function(link) {
+    link.classList.toggle('active', link.dataset.tab === tab);
+  });
+
+  window.scrollTo(0, 0);
+}
+
+function toggleMobile() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+</script>
+</body>
+</html>

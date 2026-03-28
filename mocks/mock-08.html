@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Urlist — Mock 08</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #0f172a;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── NAV ── */
+  .nav-outer {
+    border-bottom: 1px solid #e2e8f0;
+    background: #ffffff;
+  }
+  .nav {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .logo {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-links {
+    display: flex;
+    gap: 6px;
+  }
+  .nav-links a {
+    font-size: 0.875rem;
+    color: #64748b;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .nav-links a:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+  }
+  .nav-links a.active {
+    color: #0f172a;
+    background: #f1f5f9;
+    font-weight: 500;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .nav-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  /* ── SHARED ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .container-narrow {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .container-wide {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  input, textarea {
+    font-family: inherit;
+    font-size: 0.875rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #0f172a;
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  input:focus, textarea:focus {
+    border-color: #2563eb;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #94a3b8;
+  }
+  textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1;
+  }
+  .btn-primary {
+    background: #2563eb;
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    background: #1d4ed8;
+  }
+  .btn-secondary {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .btn-secondary:hover {
+    background: #e2e8f0;
+  }
+
+  .label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .hint {
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+
+  /* ── HOME ── */
+  .hero {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 80px 24px 60px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    color: #0f172a;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 1.0625rem;
+    color: #64748b;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .hero-input-row {
+    display: flex;
+    gap: 8px;
+    max-width: 440px;
+    margin: 0 auto 16px;
+  }
+  .hero-input-row input {
+    flex: 1;
+  }
+  .hero-input-row .btn {
+    flex-shrink: 0;
+    padding: 10px 24px;
+  }
+  .hero-muted {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+  }
+  .hero-features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid #e2e8f0;
+  }
+  .hero-feature {
+    text-align: center;
+    max-width: 160px;
+  }
+  .hero-feature-icon {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-feature-icon svg {
+    width: 20px;
+    height: 20px;
+    color: #64748b;
+  }
+  .hero-feature h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .hero-feature p {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    margin-bottom: 0;
+    line-height: 1.45;
+  }
+
+  /* ── COMPOSE ── */
+  .compose-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+  .compose-settings {
+    background: #f1f5f9;
+    border-radius: 12px;
+    padding: 28px;
+  }
+  .compose-settings h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-group:last-of-type {
+    margin-bottom: 0;
+  }
+  .slug-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  .slug-input-wrap:focus-within {
+    border-color: #2563eb;
+  }
+  .slug-prefix {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    padding: 10px 2px 10px 12px;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .slug-input-wrap input {
+    border: none;
+    border-radius: 0;
+    padding-left: 0;
+  }
+  .slug-input-wrap input:focus {
+    border-color: transparent;
+  }
+  .textarea-wrap {
+    position: relative;
+  }
+  .textarea-counter {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    pointer-events: none;
+  }
+  .add-url-row {
+    display: flex;
+    gap: 8px;
+  }
+  .add-url-row input {
+    flex: 1;
+  }
+  .add-url-row .btn {
+    flex-shrink: 0;
+  }
+  .url-list-compose {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .url-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.8125rem;
+  }
+  .url-list-item-url {
+    color: #2563eb;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 280px;
+  }
+  .url-remove {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 2px;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .url-remove:hover {
+    color: #ef4444;
+  }
+  .compose-actions {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  /* Preview panel */
+  .compose-preview {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 28px;
+    position: relative;
+  }
+  .preview-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 20px;
+  }
+  .preview-slug {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+  .preview-description {
+    font-size: 0.9375rem;
+    color: #64748b;
+    margin-bottom: 8px;
+    line-height: 1.55;
+  }
+  .preview-meta {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    margin-bottom: 24px;
+  }
+  .preview-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .preview-link-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .preview-link-thumb {
+    width: 100%;
+    height: 80px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .preview-link-thumb svg {
+    width: 24px;
+    height: 24px;
+    color: #cbd5e1;
+  }
+  .preview-link-body {
+    padding: 12px 14px;
+  }
+  .preview-link-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #0f172a;
+    margin-bottom: 2px;
+  }
+  .preview-link-url {
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  /* ── PUBLIC ── */
+  .public-page {
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+  .success-banner {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    font-size: 0.875rem;
+    color: #15803d;
+    font-weight: 500;
+  }
+  .success-banner svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: #16a34a;
+  }
+  .public-header {
+    margin-bottom: 28px;
+  }
+  .public-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .public-header p {
+    font-size: 0.9375rem;
+    color: #64748b;
+    line-height: 1.55;
+    margin-bottom: 6px;
+  }
+  .public-header .hint {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+  }
+  .public-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .public-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #ffffff;
+    transition: border-color 0.15s;
+  }
+  .public-card:hover {
+    border-color: #cbd5e1;
+  }
+  .public-card-thumb {
+    width: 100%;
+    height: 120px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .public-card-thumb svg {
+    width: 28px;
+    height: 28px;
+    color: #cbd5e1;
+  }
+  .public-card-body {
+    padding: 14px 16px;
+  }
+  .public-card-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .public-card-url {
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .public-card-desc {
+    font-size: 0.8125rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  /* ── MY LINKS ── */
+  .mylinks-page {
+    padding-top: 32px;
+    padding-bottom: 48px;
+  }
+  .mylinks-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .mylinks-header h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .mylinks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mylinks-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 20px;
+    transition: border-color 0.15s;
+  }
+  .mylinks-card:hover {
+    border-color: #cbd5e1;
+  }
+  .mylinks-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .mylinks-card h3 a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+  .mylinks-card h3 a:hover {
+    text-decoration: underline;
+  }
+  .mylinks-card-desc {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .mylinks-card-meta {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  .mylinks-card-footer {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+  }
+  .mylinks-card-footer button {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+  }
+  .mylinks-card-footer .edit-btn {
+    color: #2563eb;
+  }
+  .mylinks-card-footer .edit-btn:hover {
+    color: #1d4ed8;
+  }
+  .mylinks-card-footer .delete-btn {
+    color: #94a3b8;
+  }
+  .mylinks-card-footer .delete-btn:hover {
+    color: #ef4444;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    border: 1px dashed #e2e8f0;
+    border-radius: 10px;
+    margin-top: 12px;
+  }
+  .empty-state p {
+    font-size: 0.9375rem;
+    color: #94a3b8;
+    margin-bottom: 16px;
+  }
+
+  /* ── TAB BAR (bottom, for switching views) ── */
+  .tab-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    background: #0f172a;
+    padding: 5px;
+    border-radius: 12px;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  }
+  .tab-bar button {
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #94a3b8;
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .tab-bar button:hover {
+    color: #e2e8f0;
+  }
+  .tab-bar button.active {
+    background: #ffffff;
+    color: #0f172a;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ -->
+<!-- NAV                                      -->
+<!-- ════════════════════════════════════════ -->
+<div class="nav-outer">
+  <nav class="nav">
+    <div class="nav-left">
+      <a href="#" class="logo">the urlist</a>
+      <div class="nav-links">
+        <a href="#" data-nav="home" class="active">Home</a>
+        <a href="#" data-nav="compose">Compose</a>
+        <a href="#" data-nav="mylinks">My Lists</a>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="nav-avatar">BH</div>
+    </div>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- HOME                                     -->
+<!-- ════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <h1>Link lists, made simple.</h1>
+    <p>Curate, organize, and share collections of links with a single URL. No sign-up needed to start.</p>
+    <div class="hero-input-row">
+      <input type="text" placeholder="my-awesome-links" spellcheck="false">
+      <button class="btn btn-primary" onclick="switchPage('compose')">Start</button>
+    </div>
+    <p class="hero-muted">Pick a slug, add your links, publish.</p>
+
+    <div class="hero-features">
+      <div class="hero-feature">
+        <div class="hero-feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.06a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.343 8.81" /></svg>
+        </div>
+        <h3>Collect</h3>
+        <p>Paste any URL and build a curated list in seconds.</p>
+      </div>
+      <div class="hero-feature">
+        <div class="hero-feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.64 0 8.577 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.64 0-8.577-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        </div>
+        <h3>Preview</h3>
+        <p>See exactly how your list will look before publishing.</p>
+      </div>
+      <div class="hero-feature">
+        <div class="hero-feature-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
+        </div>
+        <h3>Share</h3>
+        <p>One clean URL for your whole collection.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- COMPOSE                                  -->
+<!-- ════════════════════════════════════════ -->
+<div id="page-compose" class="page">
+  <div class="container-wide">
+    <div class="compose-layout">
+
+      <!-- LEFT: Settings -->
+      <div class="compose-settings">
+        <h2>New list</h2>
+
+        <div class="form-group">
+          <label class="label">Slug</label>
+          <div class="slug-input-wrap">
+            <span class="slug-prefix">urlist.co/</span>
+            <input type="text" id="slug-input" placeholder="my-links" value="frontend-resources" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Description</label>
+          <div class="textarea-wrap">
+            <textarea id="desc-input" rows="3" maxlength="280" placeholder="What's this list about?">A curated collection of front-end development tools, frameworks, and learning resources.</textarea>
+            <span class="textarea-counter" id="desc-counter">87/280</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Add URL</label>
+          <div class="add-url-row">
+            <input type="url" placeholder="https://example.com">
+            <button class="btn btn-secondary">Add</button>
+          </div>
+          <div class="url-list-compose">
+            <div class="url-list-item">
+              <span class="url-list-item-url">https://react.dev</span>
+              <button class="url-remove">&times;</button>
+            </div>
+            <div class="url-list-item">
+              <span class="url-list-item-url">https://tailwindcss.com</span>
+              <button class="url-remove">&times;</button>
+            </div>
+            <div class="url-list-item">
+              <span class="url-list-item-url">https://developer.mozilla.org</span>
+              <button class="url-remove">&times;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="compose-actions">
+          <button class="btn btn-primary" style="width: 100%;" onclick="switchPage('public')">Publish</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="compose-preview">
+        <div class="preview-label">Preview</div>
+        <div class="preview-slug" id="preview-slug">frontend-resources</div>
+        <div class="preview-description" id="preview-desc">A curated collection of front-end development tools, frameworks, and learning resources.</div>
+        <div class="preview-meta">3 links</div>
+
+        <div class="preview-links">
+          <div class="preview-link-card">
+            <div class="preview-link-thumb">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+            </div>
+            <div class="preview-link-body">
+              <div class="preview-link-title">React</div>
+              <div class="preview-link-url">react.dev</div>
+            </div>
+          </div>
+          <div class="preview-link-card">
+            <div class="preview-link-thumb">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+            </div>
+            <div class="preview-link-body">
+              <div class="preview-link-title">Tailwind CSS</div>
+              <div class="preview-link-url">tailwindcss.com</div>
+            </div>
+          </div>
+          <div class="preview-link-card">
+            <div class="preview-link-thumb">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+            </div>
+            <div class="preview-link-body">
+              <div class="preview-link-title">MDN Web Docs</div>
+              <div class="preview-link-url">developer.mozilla.org</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- PUBLIC                                   -->
+<!-- ════════════════════════════════════════ -->
+<div id="page-public" class="page">
+  <div class="container-narrow public-page">
+
+    <div class="success-banner">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      Published! Your list is live at <strong style="margin-left: 4px;">urlist.co/frontend-resources</strong>
+    </div>
+
+    <div class="public-header">
+      <h1>frontend-resources</h1>
+      <p>A curated collection of front-end development tools, frameworks, and learning resources.</p>
+      <span class="hint">4 links</span>
+    </div>
+
+    <div class="public-grid">
+      <div class="public-card">
+        <div class="public-card-thumb">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="public-card-body">
+          <div class="public-card-title">React</div>
+          <div class="public-card-url">react.dev</div>
+          <div class="public-card-desc">The library for web and native user interfaces.</div>
+        </div>
+      </div>
+      <div class="public-card">
+        <div class="public-card-thumb">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="public-card-body">
+          <div class="public-card-title">Tailwind CSS</div>
+          <div class="public-card-url">tailwindcss.com</div>
+          <div class="public-card-desc">Rapidly build modern websites without ever leaving your HTML.</div>
+        </div>
+      </div>
+      <div class="public-card">
+        <div class="public-card-thumb">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="public-card-body">
+          <div class="public-card-title">MDN Web Docs</div>
+          <div class="public-card-url">developer.mozilla.org</div>
+          <div class="public-card-desc">Resources for developers, by developers.</div>
+        </div>
+      </div>
+      <div class="public-card">
+        <div class="public-card-thumb">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>
+        </div>
+        <div class="public-card-body">
+          <div class="public-card-title">Vite</div>
+          <div class="public-card-url">vitejs.dev</div>
+          <div class="public-card-desc">Next generation frontend tooling. It's fast.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- MY LINKS                                 -->
+<!-- ════════════════════════════════════════ -->
+<div id="page-mylinks" class="page">
+  <div class="container-narrow mylinks-page">
+
+    <div class="mylinks-header">
+      <h1>My Lists</h1>
+      <button class="btn btn-primary" onclick="switchPage('compose')">New list</button>
+    </div>
+
+    <div class="mylinks-list">
+      <div class="mylinks-card">
+        <h3><a href="#" onclick="event.preventDefault(); switchPage('public')">frontend-resources</a></h3>
+        <div class="mylinks-card-desc">A curated collection of front-end development tools, frameworks, and learning resources.</div>
+        <div class="mylinks-card-meta">3 links</div>
+        <div class="mylinks-card-footer">
+          <button class="edit-btn" onclick="switchPage('compose')">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      </div>
+
+      <div class="mylinks-card">
+        <h3><a href="#" onclick="event.preventDefault(); switchPage('public')">design-inspiration</a></h3>
+        <div class="mylinks-card-desc">Bookmarks for visual design, typography, and layout inspiration.</div>
+        <div class="mylinks-card-meta">7 links</div>
+        <div class="mylinks-card-footer">
+          <button class="edit-btn" onclick="switchPage('compose')">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      </div>
+
+      <div class="mylinks-card">
+        <h3><a href="#" onclick="event.preventDefault(); switchPage('public')">rust-getting-started</a></h3>
+        <div class="mylinks-card-desc">Everything you need to get started with Rust — the book, exercism tracks, and blog posts.</div>
+        <div class="mylinks-card-meta">5 links</div>
+        <div class="mylinks-card-footer">
+          <button class="edit-btn" onclick="switchPage('compose')">Edit</button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" style="margin-top: 24px;">
+      <p>When you delete all your lists, this empty state appears.</p>
+      <button class="btn btn-primary" onclick="switchPage('compose')">Create your first list</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- TAB BAR                                  -->
+<!-- ════════════════════════════════════════ -->
+<div class="tab-bar">
+  <button class="active" data-tab="home">Home</button>
+  <button data-tab="compose">Compose</button>
+  <button data-tab="public">Public</button>
+  <button data-tab="mylinks">My Lists</button>
+</div>
+
+<script>
+  // ── Tab switching ──
+  function switchPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+    document.querySelector('.tab-bar button[data-tab="' + id + '"]').classList.add('active');
+
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    const navLink = document.querySelector('.nav-links a[data-nav="' + id + '"]');
+    if (navLink) navLink.classList.add('active');
+
+    window.scrollTo(0, 0);
+  }
+
+  // Tab bar clicks
+  document.querySelectorAll('.tab-bar button').forEach(btn => {
+    btn.addEventListener('click', () => switchPage(btn.dataset.tab));
+  });
+
+  // Nav link clicks
+  document.querySelectorAll('.nav-links a[data-nav]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchPage(link.dataset.nav);
+    });
+  });
+
+  // ── Live preview on Compose page ──
+  const slugInput = document.getElementById('slug-input');
+  const descInput = document.getElementById('desc-input');
+  const descCounter = document.getElementById('desc-counter');
+  const previewSlug = document.getElementById('preview-slug');
+  const previewDesc = document.getElementById('preview-desc');
+
+  slugInput.addEventListener('input', () => {
+    const val = slugInput.value.trim() || 'my-links';
+    previewSlug.textContent = val;
+  });
+
+  descInput.addEventListener('input', () => {
+    const val = descInput.value;
+    previewDesc.textContent = val || 'Your description will appear here.';
+    descCounter.textContent = val.length + '/280';
+  });
+
+  // Init counter
+  descCounter.textContent = descInput.value.length + '/280';
+</script>
+</body>
+</html>

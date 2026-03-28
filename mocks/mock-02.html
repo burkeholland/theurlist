@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>the urlist — collect and share links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Source Sans 3', -apple-system, sans-serif;
+  background: #faf9f7;
+  color: #1a1a1a;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── NAV ─────────────────────────────────────── */
+
+nav {
+  background: #fff;
+  border-bottom: 1px solid #e8e5e0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+nav .nav-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.875rem;
+  color: #71717a;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+  cursor: pointer;
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: #1a1a1a;
+}
+
+.nav-links a.active {
+  color: #1a1a1a;
+}
+
+.nav-right a {
+  font-size: 0.875rem;
+  color: #71717a;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.nav-right a:hover { color: #1a1a1a; }
+
+/* ── SHARED ──────────────────────────────────── */
+
+.page { display: none; }
+.page.visible { display: block; }
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.container--wide {
+  max-width: 720px;
+}
+
+.container--narrow {
+  max-width: 540px;
+}
+
+/* ── BUTTONS ─────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+  padding: 9px 20px;
+  line-height: 1.2;
+}
+
+.btn-primary {
+  background: #e86840;
+  color: #fff;
+}
+
+.btn-primary:hover { background: #d45e38; }
+.btn-primary:focus-visible {
+  outline: 2px solid #e86840;
+  outline-offset: 2px;
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+}
+
+/* ── INPUTS ──────────────────────────────────── */
+
+input[type="text"],
+input[type="url"],
+textarea {
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: #1a1a1a;
+  border: 1px solid #e8e5e0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #fff;
+  width: 100%;
+  transition: border-color 0.15s ease;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus,
+textarea:focus {
+  border-color: #c8c4bc;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.5;
+}
+
+label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+/* ── HOME ────────────────────────────────────── */
+
+.hero {
+  text-align: center;
+  padding: 80px 24px 56px;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 1rem;
+  color: #71717a;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.hero-input-group {
+  display: flex;
+  gap: 8px;
+  max-width: 400px;
+  margin: 0 auto 12px;
+}
+
+.hero-input-group input {
+  flex: 1;
+}
+
+.hero-hint {
+  font-size: 0.8125rem;
+  color: #a1a1aa;
+}
+
+/* ── FEATURES ────────────────────────────────── */
+
+.features {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.feature-card {
+  background: #fff;
+  border: 1px solid #e8e5e0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.feature-card h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #71717a;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 0.9375rem;
+  color: #71717a;
+  line-height: 1.55;
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+
+footer {
+  border-top: 1px solid #e8e5e0;
+  padding: 24px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: #a1a1aa;
+}
+
+/* ── COMPOSE ─────────────────────────────────── */
+
+.compose-page { padding: 40px 0 64px; }
+
+.compose-page .page-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.input-prefix-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e8e5e0;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.input-prefix-wrap:focus-within {
+  border-color: #c8c4bc;
+}
+
+.input-prefix {
+  font-size: 0.9375rem;
+  color: #a1a1aa;
+  padding: 10px 0 10px 14px;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.input-prefix-wrap input {
+  border: none;
+  border-radius: 0;
+  padding-left: 2px;
+}
+
+.input-prefix-wrap input:focus {
+  border-color: transparent;
+}
+
+.field-hint {
+  font-size: 0.8125rem;
+  margin-top: 5px;
+}
+
+.field-hint--available { color: #3d9a50; }
+.field-hint--taken { color: #d44; }
+
+.textarea-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+.divider {
+  height: 1px;
+  background: #e8e5e0;
+  margin: 28px 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.add-url-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.add-url-row input { flex: 1; }
+
+/* ── LINK ROWS (compose) ─────────────────────── */
+
+.link-list {
+  list-style: none;
+}
+
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0ede8;
+}
+
+.link-row:first-child {
+  border-top: 1px solid #f0ede8;
+}
+
+.grip {
+  color: #c8c4bc;
+  font-size: 0.75rem;
+  cursor: grab;
+  letter-spacing: 2px;
+  user-select: none;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.link-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #f0ede8;
+  flex-shrink: 0;
+}
+
+.link-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.link-info-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-info-url {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-remove {
+  background: none;
+  border: none;
+  color: #c8c4bc;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.link-remove:hover {
+  color: #71717a;
+  background: #f5f3f0;
+}
+
+.compose-footer {
+  margin-top: 28px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── PUBLIC ───────────────────────────────────── */
+
+.public-page { padding: 40px 0 64px; }
+
+.toast {
+  background: #eef7ef;
+  border: 1px solid #c6e5c9;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: #2d7a3e;
+}
+
+.toast-url {
+  font-weight: 600;
+  color: #2d7a3e;
+}
+
+.toast-copy {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #a8d5ad;
+  color: #2d7a3e;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.toast-copy:hover { background: #ddf0de; }
+
+.public-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.public-desc {
+  font-size: 0.9375rem;
+  color: #71717a;
+  margin-bottom: 4px;
+}
+
+.public-meta {
+  font-size: 0.8125rem;
+  color: #a1a1aa;
+  margin-bottom: 24px;
+}
+
+.link-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link-card {
+  background: #fff;
+  border: 1px solid #e8e5e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.link-card:hover {
+  border-color: #d4d0ca;
+}
+
+.link-card-img {
+  width: 100%;
+  height: 48px;
+  background: #f0ede8;
+}
+
+.link-card-body {
+  padding: 14px 16px;
+}
+
+.link-card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.link-card-title a {
+  color: #e86840;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.link-card-title a:hover { color: #d45e38; }
+.link-card-title a:focus-visible {
+  outline: 2px solid #e86840;
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+.link-card-site {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  margin-bottom: 6px;
+}
+
+.link-card-desc {
+  font-size: 0.875rem;
+  color: #71717a;
+  line-height: 1.5;
+}
+
+/* ── MY LINKS ────────────────────────────────── */
+
+.my-links-page { padding: 40px 0 64px; }
+
+.my-links-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.my-links-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.list-items {
+  list-style: none;
+}
+
+.list-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0ede8;
+}
+
+.list-item:first-child {
+  border-top: 1px solid #f0ede8;
+}
+
+.list-item-name {
+  display: inline-block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #e86840;
+  text-decoration: none;
+  margin-bottom: 3px;
+  transition: color 0.15s ease;
+}
+
+.list-item-name:hover { color: #d45e38; }
+
+.list-item-desc {
+  font-size: 0.875rem;
+  color: #71717a;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-item-meta {
+  font-size: 0.8125rem;
+  color: #a1a1aa;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.list-item-meta span {
+  display: inline;
+}
+
+.list-item-meta a {
+  color: #a1a1aa;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.list-item-meta a:hover { color: #71717a; }
+
+.meta-sep {
+  display: inline-block;
+  margin: 0 4px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  color: #a1a1aa;
+  font-size: 0.9375rem;
+}
+
+.empty-state a {
+  color: #e86840;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.empty-state a:hover { color: #d45e38; }
+
+/* ── TABS (hidden, for JS) ───────────────────── */
+
+@media (max-width: 600px) {
+  .features {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .hero { padding: 48px 24px 40px; }
+  .hero h1 { font-size: 1.625rem; }
+  .hero-input-group {
+    flex-direction: column;
+    max-width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     NAV
+     ═══════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <span class="logo" data-tab="home">the urlist</span>
+    <ul class="nav-links">
+      <li><a href="#" data-tab="compose">Create</a></li>
+      <li><a href="#" data-tab="public">Explore</a></li>
+      <li><a href="#" data-tab="mylinks">My&nbsp;Lists</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#">Sign in</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     HOME
+     ═══════════════════════════════════════════════ -->
+<div id="page-home" class="page visible">
+  <section class="hero">
+    <h1>Collect and share links, beautifully.</h1>
+    <p>Build curated link lists with rich previews and custom short URLs.</p>
+    <div class="hero-input-group">
+      <input type="text" placeholder="Name your list, e.g. design-tools" aria-label="List name">
+      <button class="btn btn-primary" data-tab="compose">Get started</button>
+    </div>
+    <span class="hero-hint">Free, no account needed.</span>
+  </section>
+
+  <div class="features">
+    <div class="feature-card">
+      <h3>Previews</h3>
+      <p>Every link gets a rich preview with title, description, and favicon — automatically.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Short URLs</h3>
+      <p>Give your list a memorable name. Share urlist.app/your-name with anyone.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Reorder</h3>
+      <p>Drag links into the perfect order. Put the important stuff first.</p>
+    </div>
+  </div>
+
+  <footer>the urlist — a simple way to share links</footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     COMPOSE
+     ═══════════════════════════════════════════════ -->
+<div id="page-compose" class="page">
+  <div class="compose-page container">
+    <h2 class="page-title">New list</h2>
+
+    <div class="form-group">
+      <label for="slug">Short URL</label>
+      <div class="input-prefix-wrap">
+        <span class="input-prefix">urlist.app/</span>
+        <input type="text" id="slug" value="design-resources" aria-label="Short URL slug">
+      </div>
+      <div class="field-hint field-hint--available">✓ Available</div>
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Description</label>
+      <textarea id="desc" maxlength="280" aria-label="List description">A curated set of design tools, resources, and inspiration for product designers.</textarea>
+      <div class="textarea-footer">73 / 280</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-header">
+      <span class="section-title">Links</span>
+    </div>
+
+    <div class="add-url-row">
+      <input type="url" placeholder="Paste a URL…" aria-label="Add URL">
+      <button class="btn btn-primary btn-sm">Add</button>
+    </div>
+
+    <ul class="link-list">
+      <li class="link-row">
+        <span class="grip" aria-hidden="true">⋮⋮</span>
+        <div class="link-thumb" aria-hidden="true"></div>
+        <div class="link-info">
+          <div class="link-info-title">Figma</div>
+          <div class="link-info-url">figma.com</div>
+        </div>
+        <button class="link-remove" aria-label="Remove link">×</button>
+      </li>
+      <li class="link-row">
+        <span class="grip" aria-hidden="true">⋮⋮</span>
+        <div class="link-thumb" aria-hidden="true"></div>
+        <div class="link-info">
+          <div class="link-info-title">Mobbin — Design Reference</div>
+          <div class="link-info-url">mobbin.com</div>
+        </div>
+        <button class="link-remove" aria-label="Remove link">×</button>
+      </li>
+      <li class="link-row">
+        <span class="grip" aria-hidden="true">⋮⋮</span>
+        <div class="link-thumb" aria-hidden="true"></div>
+        <div class="link-info">
+          <div class="link-info-title">Untitled UI — Free Figma Design System</div>
+          <div class="link-info-url">untitledui.com</div>
+        </div>
+        <button class="link-remove" aria-label="Remove link">×</button>
+      </li>
+    </ul>
+
+    <div class="compose-footer">
+      <button class="btn btn-primary" data-tab="public">Publish list</button>
+    </div>
+  </div>
+
+  <footer>the urlist — a simple way to share links</footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PUBLIC
+     ═══════════════════════════════════════════════ -->
+<div id="page-public" class="page">
+  <div class="public-page container">
+    <div class="toast">
+      <span>Published! Here's your link:</span>
+      <span class="toast-url">urlist.app/design-resources</span>
+      <button class="toast-copy">Copy</button>
+    </div>
+
+    <h2 class="public-heading">/design-resources</h2>
+    <p class="public-desc">A curated set of design tools, resources, and inspiration for product designers.</p>
+    <p class="public-meta">4 links</p>
+
+    <div class="link-cards">
+      <article class="link-card">
+        <div class="link-card-img" aria-hidden="true"></div>
+        <div class="link-card-body">
+          <div class="link-card-title"><a href="#">Figma — The Collaborative Interface Design Tool</a></div>
+          <div class="link-card-site">figma.com</div>
+          <p class="link-card-desc">Design, prototype, and gather feedback all in one place with Figma.</p>
+        </div>
+      </article>
+      <article class="link-card">
+        <div class="link-card-img" aria-hidden="true"></div>
+        <div class="link-card-body">
+          <div class="link-card-title"><a href="#">Mobbin — Design Reference Library</a></div>
+          <div class="link-card-site">mobbin.com</div>
+          <p class="link-card-desc">Browse thousands of real app screenshots to find design inspiration and patterns.</p>
+        </div>
+      </article>
+      <article class="link-card">
+        <div class="link-card-img" aria-hidden="true"></div>
+        <div class="link-card-body">
+          <div class="link-card-title"><a href="#">Untitled UI — Free Figma Design System</a></div>
+          <div class="link-card-site">untitledui.com</div>
+          <p class="link-card-desc">The largest free and open-source Figma UI kit and design system.</p>
+        </div>
+      </article>
+      <article class="link-card">
+        <div class="link-card-img" aria-hidden="true"></div>
+        <div class="link-card-body">
+          <div class="link-card-title"><a href="#">Realtime Colors — Visualize Your Palette</a></div>
+          <div class="link-card-site">realtimecolors.com</div>
+          <p class="link-card-desc">See your color choices on a real website. Tweak until it feels right.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <footer>the urlist — a simple way to share links</footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MY LINKS
+     ═══════════════════════════════════════════════ -->
+<div id="page-mylinks" class="page">
+  <div class="my-links-page container">
+    <div class="my-links-header">
+      <h2>Your lists</h2>
+      <button class="btn btn-primary btn-sm" data-tab="compose">New list</button>
+    </div>
+
+    <ul class="list-items">
+      <li class="list-item">
+        <a href="#" class="list-item-name" data-tab="public">/design-resources</a>
+        <p class="list-item-desc">A curated set of design tools, resources, and inspiration for product designers.</p>
+        <div class="list-item-meta">
+          <span>4 links</span>
+          <span class="meta-sep">·</span>
+          <a href="#" data-tab="compose">Edit</a>
+          <span class="meta-sep">·</span>
+          <a href="#">Delete</a>
+        </div>
+      </li>
+      <li class="list-item">
+        <a href="#" class="list-item-name">/frontend-reads</a>
+        <p class="list-item-desc">Articles and talks about modern frontend development, performance, and architecture.</p>
+        <div class="list-item-meta">
+          <span>7 links</span>
+          <span class="meta-sep">·</span>
+          <a href="#" data-tab="compose">Edit</a>
+          <span class="meta-sep">·</span>
+          <a href="#">Delete</a>
+        </div>
+      </li>
+      <li class="list-item">
+        <a href="#" class="list-item-name">/startup-toolkit</a>
+        <p class="list-item-desc">Everything you need to go from idea to launch — hosting, analytics, payments, and more.</p>
+        <div class="list-item-meta">
+          <span>12 links</span>
+          <span class="meta-sep">·</span>
+          <a href="#" data-tab="compose">Edit</a>
+          <span class="meta-sep">·</span>
+          <a href="#">Delete</a>
+        </div>
+      </li>
+    </ul>
+
+    <div class="empty-state" style="display: none;">
+      <p>You haven't created any lists yet. <a href="#" data-tab="compose">Create one</a></p>
+    </div>
+  </div>
+
+  <footer>the urlist — a simple way to share links</footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JS — Tab switching
+     ═══════════════════════════════════════════════ -->
+<script>
+(function () {
+  const pages = {
+    home:    document.getElementById('page-home'),
+    compose: document.getElementById('page-compose'),
+    public:  document.getElementById('page-public'),
+    mylinks: document.getElementById('page-mylinks'),
+  };
+
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  function show(key) {
+    Object.values(pages).forEach(p => p.classList.remove('visible'));
+    if (pages[key]) pages[key].classList.add('visible');
+
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.dataset.tab === key);
+    });
+
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  document.addEventListener('click', function (e) {
+    const trigger = e.target.closest('[data-tab]');
+    if (trigger) {
+      e.preventDefault();
+      show(trigger.dataset.tab);
+    }
+  });
+
+  // Textarea character counter
+  const textarea = document.getElementById('desc');
+  if (textarea) {
+    const counter = textarea.parentElement.querySelector('.textarea-footer');
+    textarea.addEventListener('input', function () {
+      counter.textContent = this.value.length + ' / 280';
+    });
+  }
+})();
+</script>
+</body>
+</html>
