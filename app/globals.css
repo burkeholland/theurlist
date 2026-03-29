@@ -275,10 +275,11 @@ textarea.input {
   overflow: hidden;
   display: flex;
   gap: 0;
+  min-height: 80px;
 }
 .pub-card-img {
   width: 120px;
-  min-height: 80px;
+  height: 100%;
   background: var(--bg-secondary);
   flex-shrink: 0;
   display: flex;
@@ -295,6 +296,7 @@ textarea.input {
   padding: 10px 12px;
   min-width: 0;
   flex: 1;
+  overflow: hidden;
 }
 .pub-card-title {
   font-size: 14px;

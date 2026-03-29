@@ -57,14 +57,27 @@ function clearDraft(listId?: string): void {
 }
 
 export function useDraft(listId?: string) {
-  const [state, setState] = useState<{ slug: string; description: string; links: DraftLink[]; loaded: boolean }>(() => {
-    const draft = loadDraft(listId);
-    if (draft) {
-      return { slug: draft.slug, description: draft.description, links: draft.links, loaded: true };
-    }
-    return { slug: '', description: '', links: [], loaded: typeof window !== 'undefined' };
+  const [state, setState] = useState<{ slug: string; description: string; links: DraftLink[]; loaded: boolean }>({
+    slug: '',
+    description: '',
+    links: [],
+    loaded: false,
   });
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load draft from localStorage after hydration to avoid server/client mismatch
+  const initDraft = useCallback((id?: string) => {
+    const draft = loadDraft(id);
+    if (draft) {
+      setState((prev) => ({ ...prev, slug: draft.slug, description: draft.description, links: draft.links, loaded: true }));
+    } else {
+      setState((prev) => ({ ...prev, loaded: true }));
+    }
+  }, []);
+
+  useEffect(() => {
+    initDraft(listId);
+  }, [listId, initDraft]);
 
   const { slug, description, links, loaded } = state;
 

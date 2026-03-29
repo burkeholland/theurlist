@@ -110,16 +110,17 @@ function ComposeContent() {
     [links.length, addLink]
   );
 
-  // Auto-add URL from query param
+  // Auto-add URL from query param, then strip it so refreshes don't re-add
   useEffect(() => {
     if (loaded && !initialUrlProcessed) {
       const urlParam = searchParams.get('url');
       if (urlParam) {
         void handleAddUrl(urlParam);
+        router.replace('/app/compose', { scroll: false });
       }
       setInitialUrlProcessed(true);
     }
-  }, [loaded, initialUrlProcessed, searchParams, handleAddUrl]);
+  }, [loaded, initialUrlProcessed, searchParams, handleAddUrl, router]);
 
   const handlePublish = async () => {
     setPublishing(true);
