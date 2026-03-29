@@ -199,64 +199,8 @@ function ComposeContent() {
           </div>
         </main>
         <style jsx>{`
-          .compose-header {
-            margin-bottom: 20px;
-          }
-
-          .compose-header h1 {
-            font-size: 18px;
-            font-weight: 600;
-          }
-
           .field-group {
             margin-bottom: 14px;
-          }
-
-          .section-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 0;
-          }
-
-          .section-head h2 {
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0;
-          }
-
-          .compose-actions {
-            margin-top: 16px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-          }
-
-          .compose-meta-row {
-            display: flex;
-            gap: 16px;
-          }
-
-          .compose-meta-row .field-group {
-            flex: 1;
-            min-width: 0;
-          }
-
-          .pub-links {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-          }
-
-          @media (max-width: 580px) {
-            .compose-meta-row {
-              flex-direction: column;
-              gap: 0;
-            }
           }
         `}</style>
       </div>
@@ -266,12 +210,8 @@ function ComposeContent() {
   return (
     <div style={{ minHeight: '100vh' }}>
       <NavHeader />
-      <main style={{ maxWidth: '860px', margin: '0 auto', padding: '28px 16px 48px' }}>
-        <div className="page">
-          <div className="compose-header">
-            <h1>New list</h1>
-          </div>
-
+      <div className="compose-meta-panel">
+        <div className="compose-meta-panel-inner">
           {error && (
             <div
               style={{
@@ -296,7 +236,6 @@ function ComposeContent() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value.slice(0, 280))}
                 placeholder="What's this list about?"
-                rows={2}
                 className="input"
               />
               <div className="char-count">
@@ -304,7 +243,11 @@ function ComposeContent() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
+      <main style={{ maxWidth: '860px', margin: '0 auto', padding: '28px 16px 48px' }}>
+        <div className="page">
           <UrlInput
             onSubmit={handleAddUrl}
             placeholder="https://example.com"
@@ -330,14 +273,14 @@ function ComposeContent() {
 
       </main>
       <style jsx>{`
-        .compose-header {
-          margin-bottom: 20px;
+        .compose-meta-panel {
+          background: var(--bg-secondary);
+          padding: 24px 16px 4px;
         }
 
-        .compose-header h1 {
-          font-size: 18px;
-          font-weight: 600;
-          margin: 0;
+        .compose-meta-panel-inner {
+          max-width: 860px;
+          margin: 0 auto;
         }
 
         .field-group {

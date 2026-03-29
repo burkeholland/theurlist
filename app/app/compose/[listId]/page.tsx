@@ -249,19 +249,20 @@ export default function EditComposePage({ params }: EditPageProps) {
           </div>
         )}
 
-        <div className="field-group">
-          <label htmlFor="description" className="label">
-            Description
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value.slice(0, 280))}
-            placeholder="What's this list about?"
-            rows={2}
-            className="input"
-          />
-          <p className="char-count">{description.length}/280</p>
+        <div className="compose-meta-panel">
+          <div className="field-group">
+            <label htmlFor="description" className="label">
+              Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value.slice(0, 280))}
+              placeholder="What's this list about?"
+              className="input"
+            />
+            <p className="char-count">{description.length}/280</p>
+          </div>
         </div>
 
         <div className="field-group">
@@ -299,6 +300,12 @@ export default function EditComposePage({ params }: EditPageProps) {
           .compose-header h1 {
             font-size: 18px;
             font-weight: 600;
+          }
+          .compose-meta-panel {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 16px 16px 4px;
+            margin-bottom: 14px;
           }
           .field-group {
             margin-bottom: 14px;
